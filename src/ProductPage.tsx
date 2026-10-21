@@ -77,8 +77,8 @@ const WHY = [
     body: "A signed audit log and COSE, SCITT and C2PA statements over Ed25519 with W3C DID identity record what an agent stored, and when, in formats others can check.",
   },
   {
-    title: "Deletion that erases",
-    body: "Delete removes a record from every query at once and zeroes its stored text. Purge rewrites the journal and overwrites the old generation before it returns.",
+    title: "Purge that erases",
+    body: "Delete removes a record from every query at once. Purge rewrites the journal without it and overwrites the old generation with zeros before it returns; a test scans every store file for the deleted text.",
   },
 ];
 

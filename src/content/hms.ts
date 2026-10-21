@@ -141,7 +141,7 @@ export const HMS_CAPABILITIES: HmsCapability[] = [
   },
   {
     title: "Purge that erases text",
-    body: "Deleting zeroes the deleted text records; purge rewrites the journal without them, overwrites the replaced generation with zeros and syncs before it returns. A test scans every file in the store for the deleted text.",
+    body: "Delete removes a record from every query at once; without purge its journal frame stays until compaction. Purge rewrites the journal without it, overwrites the replaced generation with zeros and syncs before it returns. A test scans every file in the store for the deleted text.",
     status: "Ships",
     source: "docs/memory-api/README.md",
   },
@@ -195,7 +195,7 @@ export const HMS_COMPETITOR_ROWS: HmsCompetitorRow[] = [
       Mem0: "Open-source library; Mem0 Platform is hosted",
       Zep: "Hosted; Community Edition no longer maintained (April 2025)",
       Chroma: "In-process from Python; JS and Rust use a server",
-      Qdrant: "Server or Cloud",
+      Qdrant: "Server or Cloud; the Python client has a local mode (exact scan)",
     },
   },
   {
@@ -219,8 +219,8 @@ export const HMS_COMPETITOR_ROWS: HmsCompetitorRow[] = [
     },
   },
   {
-    property: "Delete erases stored data",
-    hms: "Text zeroed on delete; purge overwrites old generations",
+    property: "Deleted text erased from disk",
+    hms: "Purge rewrites the journal and zeroes old generations before returning",
     others: {
       Mem0: "Not documented",
       Zep: "Removed in the background; overwrite not documented",
@@ -366,7 +366,7 @@ export const HMS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is it really deleted when I delete it?",
-    a: "Delete removes a record from every query at once and zeroes its stored text. Purge also rewrites the journal and overwrites the old generation with zeros before it returns. Copies outside the store's files, such as backups, snapshots and SSD wear levelling, are out of any library's reach; encrypt the store when those matter. Signed deletion certificates are research, not yet in the shipped API.",
+    a: "Delete removes a record from every query at once; its journal frame stays until compaction or purge. Purge rewrites the journal and overwrites the old generation with zeros before it returns. Copies outside the store's files, such as backups, snapshots and SSD wear levelling, are out of any library's reach; encrypt the store when those matter. Signed deletion certificates are research, not yet in the shipped API.",
   },
   {
     q: "Which license applies?",
@@ -405,7 +405,6 @@ export const HMS_JSON_LD = {
   url: HMS_CANONICAL,
   image: HMS_OG_IMAGE,
   description: HMS_META.description,
-  softwareVersion: "0.6.1",
   license: "https://spdx.org/licenses/Apache-2.0.html",
   codeRepository: HMS_REPO,
   programmingLanguage: "Rust",
