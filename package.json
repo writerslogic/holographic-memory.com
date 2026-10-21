@@ -1,0 +1,40 @@
+{
+  "name": "holographic-memory-com",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Product site for WritersLogic Holographic Memory",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "og": "node scripts/render-og.mjs scripts/assets/og-image.html public/og-image.png",
+    "deploy:preview": "npm run build && npx wrangler pages deploy dist --project-name holographic-memory --branch preview"
+  },
+  "dependencies": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.61.1",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "24.10.7",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.2",
+    "eslint": "10.0.1",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "16.5.0",
+    "puppeteer-core": "25.3.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.56.0",
+    "vite": "7.3.6",
+    "vitest": "4.1.10"
+  }
+}

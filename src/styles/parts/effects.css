@@ -1,0 +1,567 @@
+/* effects.css — extracted from index.css (order-preserving; Tailwind v4
+   inlines these @imports in order, so the compiled output is unchanged).
+   See src/index.css for the module map. */
+
+/* Confetti/Celebration Animations - kept minimal for score celebrations */
+
+@keyframes celebration-bounce {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.05) rotate(-2deg);
+  }
+}
+
+.animate-celebration {
+  animation: celebration-bounce 600ms var(--ease-spring);
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+  }
+}
+
+/* Reduced Motion Overrides - See comprehensive block at line ~1770 */
+
+/* ========================================
+   DOM Depth Optimizations - CSS Backgrounds
+   ======================================== */
+
+/* Segment Hero background - replaces 3 nested divs with pseudo-elements */
+.segment-hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(30, 27, 75, 0.2), transparent, transparent);
+  pointer-events: none;
+}
+
+.segment-hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 25% 25%, color-mix(in srgb, var(--gradient-primary-start) 10%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+  filter: blur(60px);
+  pointer-events: none;
+  animation: segment-hero-pulse 4s ease-in-out infinite;
+}
+
+@keyframes segment-hero-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* CTA section background - replaces decorative blob divs */
+.segment-cta-bg {
+  position: relative;
+}
+
+.segment-cta-bg::before {
+  content: '';
+  position: absolute;
+  inset: -50px;
+  background:
+    radial-gradient(ellipse at 30% 0%, color-mix(in srgb, var(--gradient-primary-start) 15%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 100%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment-hero-bg::after {
+    animation: none;
+  }
+}
+
+/* ========================================
+   Native Dialog Components - CSP Compliant
+   ======================================== */
+
+/* Base Dialog Component - uses design tokens, closing animation, responsive */
+.dialog-component {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-3);
+  background: var(--panel-bg);
+  color: var(--editor-text);
+  max-width: min(90vw, 560px);
+  max-height: 85vh;
+  overflow-y: auto;
+  z-index: var(--z-modal, 400);
+  box-shadow: var(--shadow-lg);
+
+  /* Enter: start invisible, animate in */
+  opacity: 0;
+  transform: translateY(var(--space-2)) scale(0.98);
+  transition: opacity var(--dur-default) var(--ease-default),
+              transform var(--dur-default) var(--ease-default);
+
+  /* Mobile: slide up from bottom as sheet */
+  @media (max-width: 640px) {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--r-3) var(--r-3) 0 0;
+    transform: translateY(100%);
+  }
+}
+
+.dialog-component[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  @media (max-width: 640px) {
+    transform: translateY(0);
+  }
+}
+
+/* Closing state: animate back out before dialog.close() */
+.dialog-component[open].closing {
+  opacity: 0;
+  transform: translateY(var(--space-2)) scale(0.98);
+  @media (max-width: 640px) {
+    transform: translateY(100%);
+  }
+}
+
+.dialog-component::backdrop,
+.confirm-dialog::backdrop {
+  background: rgba(7, 7, 10, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow: auto;
+}
+
+/* Confirm Dialog Component */
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-3);
+  background: var(--panel-bg);
+  color: var(--editor-text);
+  max-width: min(90vw, 400px);
+  z-index: var(--z-modal, 400);
+  box-shadow: var(--shadow-lg);
+
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity var(--dur-fast) var(--ease-default),
+              transform var(--dur-fast) var(--ease-default);
+}
+
+.confirm-dialog[open] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.confirm-dialog[open].closing {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.confirm-dialog-content {
+  padding: var(--space-4);
+}
+
+/* Reduced motion for dialogs */
+@media (prefers-reduced-motion: reduce) {
+  .dialog-component[open],
+  .dialog-component[open]::backdrop,
+  .confirm-dialog[open],
+  .confirm-dialog[open]::backdrop {
+    animation: none;
+  }
+}
+
+/* Focus styles - using brand teal color for consistency */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Focus styles for custom interactive elements */
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="switch"]:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   Phase 2 — Visual Identity
+   ======================================== */
+
+/* 2.1 Gold Dust CTA Micro-interactions */
+.gold-dust-cta {
+  position: relative;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gold-dust-cta::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-default) ease;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 176, 32, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 50% 30%, rgba(255, 176, 32, 0.3) 0%, transparent 35%),
+                radial-gradient(circle at 80% 60%, rgba(255, 176, 32, 0.35) 0%, transparent 38%),
+                radial-gradient(circle at 35% 70%, rgba(255, 176, 32, 0.25) 0%, transparent 30%),
+                radial-gradient(circle at 65% 20%, rgba(255, 176, 32, 0.3) 0%, transparent 32%);
+  }
+
+  /* Dust only appears — and only floats — on hover. The float animation used to
+     run infinitely on every CTA while invisible (opacity:0), burning a
+     continuous transform tick per button; scoping it to :hover removes that. */
+  .gold-dust-cta:hover::before {
+    opacity: 1;
+    animation: gold-dust-float 3s ease-in-out infinite;
+  }
+
+  .gold-dust-cta::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 176, 32, 0.15), transparent);
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity var(--dur-default) ease;
+  }
+
+  .gold-dust-cta:hover::after {
+    opacity: 1;
+    animation: shimmer 1.5s ease-in-out;
+  }
+
+  @keyframes gold-dust-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+}
+
+/* Reduced-motion fallback: gold border glow */
+@media (prefers-reduced-motion: reduce) {
+  .gold-dust-cta:hover {
+    box-shadow: 0 0 0 2px rgba(255, 176, 32, 0.25);
+  }
+}
+
+/* ── Vellum Fiber Texture ──────────────────────────────── */
+/* Directional fiber pattern like handmade paper. Uses      */
+/* stretched noise for horizontal fiber orientation.        */
+/* Applied per-section so fiber "direction" can vary.       */
+@utility paper-grain {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.15' numOctaves='5' seed='42'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='512' height='128' filter='url(%23f)'/%3E%3C/svg%3E");
+    background-size: 100% 200px;
+    z-index: 1;
+    mix-blend-mode: overlay;
+    -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 75%);
+  }
+}
+
+/* ── Manuscript Ruling ─────────────────────────────────── */
+/* Faint horizontal lines like a manuscript's ruling,       */
+/* barely visible, fading at left and right edges.          */
+/* Replaces the old dot grid with something that speaks     */
+/* to the writing process itself.                           */
+/* Static grid texture. The former 60s `matrix-drift` background-position
+   animation repainted the whole layer every frame on the main thread (and
+   background-attachment:fixed forced a full repaint on every scroll); a ruling
+   texture reads the same standing still, so it is now painted once. */
+.blueprint-grid {
+  background-image: linear-gradient(rgba(91, 127, 164, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(91, 127, 164, 0.2) 1px, transparent 1px), linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+  background-position: center top;
+  background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at center, black 10%, transparent 80%);
+  mask-image: radial-gradient(ellipse 100% 100% at center, black 10%, transparent 80%);
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SURFACE SYSTEM — one token-driven surface, semantic variants
+   ═══════════════════════════════════════════════════════════
+   A single implementation whose look is set entirely by the --surface-*
+   tokens (see :root / [data-theme="light"]). Variants change tokens, not the
+   rule. Only .surface-overlay uses backdrop-filter — it floats over page
+   content, the one place frost actually reads; every other surface is an
+   opaque-translucent fill over the smooth backdrop, visually equivalent to a
+   blurred pane at a fraction of the GPU cost.
+
+   Semantic:  .surface .surface-raised .surface-inset .surface-overlay
+              .surface-accent .surface-success .surface-danger
+   Interactive lift: add [data-interactive] (or use an <a>/<button>); never on
+   a plain card, only under (hover: hover).
+   The legacy glass-* class aliases were removed once every consumer migrated to
+   .surface* (see DESIGN_SYSTEM.md). .surface-panel is the one bundled variant
+   kept: a .surface with the standardized panel padding baked in. */
+
+.surface,
+.surface-panel {
+  background: var(--surface-fill);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow);
+}
+.surface-panel {                                       /* .surface + standardized panel padding */
+  padding: clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem);
+}
+
+.surface-raised {
+  background: var(--surface-fill-raised);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow-raised);
+}
+
+.surface-inset {
+  background: var(--surface-fill-inset);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--surface-radius);
+  box-shadow: inset 0 2px 4px rgba(8, 9, 12, 0.32), inset 0 1px 1px rgba(8, 9, 12, 0.20);
+}
+
+.surface-overlay {
+  background: var(--surface-fill-overlay);
+  backdrop-filter: blur(var(--surface-overlay-blur)) saturate(1.2);
+  -webkit-backdrop-filter: blur(var(--surface-overlay-blur)) saturate(1.2);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow-raised);
+}
+/* Overlay is the only blur-dependent surface — give it a real opaque fallback. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .surface-overlay { background: var(--surface-fill-solid); }
+}
+
+/* Semantic tints — set fill + border tokens only, otherwise identical to base. */
+.surface-accent {
+  background: var(--surface-accent-fill);
+  border: 1px solid var(--surface-accent-border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow);
+}
+.surface-success {
+  background: var(--surface-success-fill);
+  border: 1px solid var(--surface-success-border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow);
+}
+.surface-danger {
+  background: var(--surface-danger-fill);
+  border: 1px solid var(--surface-danger-border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow);
+}
+
+/* Transition the properties the interactive lift touches (no `all`). */
+:is(.surface, .surface-panel, .surface-raised, .surface-inset, .surface-overlay,
+    .surface-accent, .surface-success, .surface-danger) {
+  transition: border-color var(--dur-default) var(--ease-default),
+              box-shadow var(--dur-default) var(--ease-default),
+              transform var(--dur-default) var(--ease-default);
+}
+
+/* Interactive lift — ONLY links, buttons, or [data-interactive] surfaces, and
+   ONLY where hover exists. A plain (non-interactive) card never lifts. */
+@media (hover: hover) {
+  :is(a, button, [data-interactive]):is(
+    .surface, .surface-panel, .surface-raised, .surface-accent, .surface-success, .surface-overlay
+  ):hover {
+    border-color: var(--surface-border-strong);
+    box-shadow: var(--surface-shadow-raised);
+    transform: translateY(-1px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ATMOSPHERIC BACKGROUND — one static, low-cost backdrop
+   ═══════════════════════════════════════════════════════════
+   A single fixed layer of soft radial gradients (the moss /
+   amber / olive blobs and the warm hero glow, frozen in place).
+   No filter:blur, no will-change, no animation — painted once
+   and composited, so there is no main-thread animation cost and
+   no permanent GPU layers to churn on low-power devices. This
+   replaces the former animated blob + light-leak systems (which
+   together ran 8 infinite animations across ~12 blurred layers). */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 55vmax at 8% 2%, rgba(45, 50, 30, 0.55) 0%, transparent 62%),
+    radial-gradient(52vmax 48vmax at 92% 100%, rgba(74, 61, 29, 0.45) 0%, transparent 62%),
+    radial-gradient(46vmax 42vmax at 34% 46%, rgba(31, 36, 22, 0.38) 0%, transparent 60%),
+    radial-gradient(34vmax 30vmax at 50% 20%, rgba(201, 152, 60, 0.06) 0%, transparent 60%),
+    #0A0C07;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   HARDWARE-AWARE MEDIA QUERIES
+   ═══════════════════════════════════════════════════════════
+   Capability-based adaptations that go beyond breakpoints.
+   These detect display hardware, input devices, user
+   preferences, and viewport geometry to serve the right
+   visual treatment for every device class. */
+
+/* ── HDR / XDR DISPLAYS ─────────────────────────────────── */
+/* Pro Display XDR, MacBook Liquid Retina XDR, and HDR-capable
+   monitors can render brighter whites and deeper blacks than
+   standard sRGB. Boost glows, light leaks, and glass interior
+   highlights to exploit the extended luminance range. */
+
+@media (dynamic-range: high) {
+  /* HDR: a touch more presence on the one blurred surface + gold CTA glow. */
+  .surface-overlay {
+    box-shadow: var(--surface-shadow-raised), inset 0 1px 0 rgba(240, 243, 250, 0.16);
+  }
+  .gold-dust-cta {
+    text-shadow: 0 0 16px rgba(212, 163, 89, 0.7);
+  }
+}
+
+/* ── POINTER / HOVER ──────────────────────────────────────
+   The interactive lift is defined once in the SURFACE SYSTEM block above, gated
+   on (hover: hover) + interactivity — so touch and non-interactive cards need
+   no extra rules here, and surfaces carry no min-height (they are not controls). */
+
+/* ── DARK/LIGHT MODE PREFERENCE ─────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .ambient-bg { opacity: 0.3; }
+}
+
+/* ── CONTRAST PREFERENCE ──────────────────────────────────
+   More contrast → opaque fills, stronger borders, no blur. Done by repointing
+   the surface tokens, so every surface (incl. .surface-panel) updates at once. */
+@media (prefers-contrast: more) {
+  :root, [data-theme="light"] {
+    --surface-fill: var(--surface-fill-solid);
+    --surface-fill-overlay: var(--surface-fill-solid);
+    --surface-fill-inset: var(--surface-fill-solid);
+    --surface-accent-fill: var(--surface-accent-fill-solid);
+    --surface-success-fill: var(--surface-success-fill-solid);
+    --surface-danger-fill: var(--surface-danger-fill-solid);
+    --surface-border: var(--surface-border-strong);
+  }
+  .surface-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .ambient-bg { opacity: 0.5; }
+}
+
+/* ── TRANSPARENCY PREFERENCE ──────────────────────────────
+   macOS "Reduce transparency" → solid surfaces, no blur. Token repoint covers
+   every surface; only the overlay's backdrop-filter needs a class rule. */
+@media (prefers-reduced-transparency: reduce) {
+  :root, [data-theme="light"] {
+    --surface-fill: var(--surface-fill-solid);
+    --surface-fill-overlay: var(--surface-fill-solid);
+    --surface-fill-inset: var(--surface-fill-solid);
+    --surface-accent-fill: var(--surface-accent-fill-solid);
+    --surface-success-fill: var(--surface-success-fill-solid);
+    --surface-danger-fill: var(--surface-danger-fill-solid);
+    --surface-border: var(--surface-border-strong);
+  }
+  .surface-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .bg-grain::before,
+  .paper-grain::before,
+  .grain-overlay,
+  .ambient-bg {
+    display: none;
+  }
+}
+
+/* ── LOW POWER / DATA SAVER ──────────────────────────────────
+   Base surfaces already avoid blur; only the overlay pays for backdrop-filter.
+   Drop it (falls back to the opaque overlay fill) and drop the grain. */
+@media (prefers-reduced-data: reduce), (update: slow) {
+  :root, [data-theme="light"] {
+    --surface-fill-overlay: var(--surface-fill-solid);
+  }
+  .surface-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .bg-grain::before,
+  .paper-grain::before,
+  .grain-overlay {
+    display: none;
+  }
+}
+
+/* ── FORCED COLORS (Windows High Contrast, etc.) ─────────────
+   The OS replaces the palette; drop decorative layers and the overlay blur. */
+@media (forced-colors: active) {
+  .bg-grain::before,
+  .paper-grain::before,
+  .grain-overlay,
+  .ambient-bg {
+    display: none;
+  }
+  .surface-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+

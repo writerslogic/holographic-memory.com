@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- Source of public/og-holographic-memory.png. Regenerate with:
+     npm run og -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "WL Display"; src: url("../../public/fonts/WritersLogic-Display.woff2") format("woff2"); }
+  @font-face { font-family: "DM Sans"; src: url("../../public/fonts/dm-sans-variable.woff2") format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "JB Mono"; src: url("../../public/fonts/jetbrains-mono-regular.woff2") format("woff2"); }
+  html, body { margin: 0; width: 1200px; height: 630px; }
+  body {
+    background:
+      radial-gradient(ellipse 70% 80% at 85% 20%, rgba(58, 158, 142, 0.20) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 70% at 0% 100%, rgba(201, 152, 60, 0.10) 0%, transparent 70%),
+      #0A0C07;
+    color: #F2EFE6;
+    font-family: "DM Sans", sans-serif;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 80px;
+    gap: 64px;
+  }
+  svg { width: 300px; height: 252px; flex: none; color: #F2EFE6; }
+  .eyebrow { font-family: "JB Mono", monospace; font-size: 22px; letter-spacing: 0.08em; text-transform: uppercase; color: #5FC2B1; margin: 0 0 18px; }
+  h1 { font-family: "WL Display", serif; font-weight: 600; font-size: 66px; line-height: 1.04; margin: 0 0 26px; }
+  p { font-size: 30px; line-height: 1.35; color: #CFCABD; margin: 0 0 30px; max-width: 640px; }
+  .meta { font-family: "JB Mono", monospace; font-size: 20px; color: #A9A495; }
+</style>
+</head>
+<body>
+  <svg viewBox="96 120 392 330" fill="currentColor" stroke="currentColor" stroke-width="5" stroke-linecap="round" aria-hidden="true">
+    <g id="edges"></g><g id="nodes" stroke="none"></g>
+  </svg>
+  <div>
+    <p class="eyebrow">WritersLogic</p>
+    <h1>Holographic Memory</h1>
+    <p>Local, encrypted, provenance-aware memory for AI agents.</p>
+    <div class="meta">Open source · Rust · github.com/writerslogic/holographic-memory</div>
+  </div>
+  <script>
+    const E = [[204,150,308,150],[308,150,396,250],[396,250,256,432],[256,432,116,250],[116,250,204,150],[204,150,256,196],[308,150,256,196],[256,196,256,250],[116,250,196,250],[196,250,256,250],[256,250,316,250],[316,250,396,250],[256,196,116,250],[256,196,396,250],[204,150,256,432],[308,150,256,432],[256,250,256,432],[196,250,256,432],[316,250,256,432],[256,196,256,432],[430,300,452,300],[440,330,470,330],[455,360,471,360],[120,300,138,300],[430,210,444,210],[460,250,472,250]];
+    const N = [[204,150,7],[308,150,7],[116,250,7],[396,250,7],[256,196,7],[256,250,7],[196,250,7],[316,250,7],[256,432,7],[470,290,3.5],[150,210,3.5],[440,400,3.5],[110,360,3.5]];
+    const ns = "http://www.w3.org/2000/svg";
+    for (const [x1, y1, x2, y2] of E) {
+      const l = document.createElementNS(ns, "line");
+      Object.entries({ x1, y1, x2, y2 }).forEach(([k, v]) => l.setAttribute(k, v));
+      document.getElementById("edges").appendChild(l);
+    }
+    for (const [cx, cy, r] of N) {
+      const c = document.createElementNS(ns, "circle");
+      Object.entries({ cx, cy, r }).forEach(([k, v]) => c.setAttribute(k, v));
+      document.getElementById("nodes").appendChild(c);
+    }
+  </script>
+</body>
+</html>

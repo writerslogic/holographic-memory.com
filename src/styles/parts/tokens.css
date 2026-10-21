@@ -1,0 +1,771 @@
+/* tokens.css — extracted from index.css (order-preserving; Tailwind v4
+   inlines these @imports in order, so the compiled output is unchanged).
+   See src/index.css for the module map. */
+
+@theme {
+  /* ══════════════════════════════════════════════════════════
+     UNIFIED PALETTE — derived from letterhead steel blue-gray
+     Steel primary · Gold/Teal accent · Vellum unique
+     ══════════════════════════════════════════════════════════ */
+
+  /* ── SLATE (backgrounds, derived from steel hue 206-212°) ── */
+  --color-slate-950: #0C1219;  /* void — deepest */
+  --color-slate-900: #141D27;  /* ground — primary bg */
+  --color-slate-800: #1C2832;  /* raised — card/panel bg */
+  --color-slate-700: #273744;  /* elevated — active surfaces */
+  --color-slate-600: #334A5A;  /* alt elevated */
+  --color-slate-500: #4E6572;  /* mid steel (canonical for former steel-500) */
+  --color-slate-400: #637D8A;  /* steel — brand anchor (= logo color) */
+  --color-slate-300: #8DA3AF;  /* steel light — secondary text */
+  --color-slate-200: #94A3B1;  /* muted text */
+  --color-slate-100: #E4E8EC;  /* primary text on dark */
+
+  /* ── VELLUM (warm highlights, parchment — WritersLogic unique) ── */
+  --color-vellum-50:  #F5F0E6;
+  --color-vellum-100: #EDE5D6;
+  --color-vellum-200: #DED1BC;  /* primary vellum highlight */
+  --color-vellum-300: #CABDA2;
+  --color-vellum-400: #B5A88A;
+  --color-vellum-500: #9E9274;
+
+  /* ── STEEL — legacy neutral scale, aliased onto slate (single canonical
+     value). `steel`, `steel-300`, `steel-400`, `steel-500` are consumed
+     directly as Tailwind utilities (bg-steel, text-steel-300/-400/-500, etc.)
+     by several pages/components, so those stay despite being aliases.
+     100/200/600/700/800/900 were distinct literal tints or slate aliases with
+     zero consumers anywhere (verified via repo-wide grep for
+     var(--color-steel-*) and the steel-100/200/600/700/800/900 utility
+     classes) and were removed in the 2026-08 cleanup. `steel-light` has no
+     confirmed consumer either but is kept — same shape as the used shades,
+     low removal value. ── */
+  --color-steel:      var(--color-slate-400);
+  --color-steel-light: var(--color-slate-300);
+  --color-steel-300: var(--color-slate-300);
+  --color-steel-400: var(--color-slate-400);
+  --color-steel-500: var(--color-slate-500);
+
+  /* ── GOLD (warm accent, HSL 39°, 53%, 51%) ── */
+  --color-gold: #9B7318;
+  --color-gold-light: #DDB85E;
+  --color-gold-100: #F0E2C8;
+  --color-gold-200: #E5CFA2;
+  --color-gold-300: #D9BC7C;
+  --color-gold-400: #D4A843;  /* legacy compat */
+  --color-gold-500: #C9983C;  /* primary gold accent */
+  --color-gold-600: #B08530;
+  --color-gold-700: #957026;
+  --color-gold-800: #7A5B1C;
+  --color-gold-900: #5E4514;
+
+  /* ── TEAL (cool accent, verification, HSL 168°, 45%, 42%) ── */
+  --color-teal: #3A9E8E;
+  --color-teal-light: #5CBDAD;
+  --color-teal-100: #C2EAE3;
+  --color-teal-200: #8DD6C9;
+  --color-teal-300: #5CBDAD;
+  --color-teal-400: #3A9E8E;  /* primary teal accent */
+  --color-teal-500: #2D7D70;
+  --color-teal-600: #225E54;
+  --color-teal-700: #184540;
+  --color-teal-800: #0E2E2A;
+  --color-teal-900: #071917;
+
+  /* ── TAMPER (error/destructive, muted red) ── */
+  --color-tamper-100: #F0CCCC;
+  --color-tamper-300: #D48A8A;
+  --color-tamper-500: #C45B5B;  /* primary error */
+  --color-tamper-700: #8A3030;
+
+  /* ── WARN (pending/attention, maps to gold family) ── */
+  --color-warn-100: #F0DFB8;
+  --color-warn-300: #D9B060;
+  --color-warn-500: #B08530;
+  --color-warn-700: #7A5B1C;
+
+  /* ── SURFACE TONES (semantic aliases) ── */
+  --color-surface-dark: #17212D;  /* softened dark — bg-surface-dark wrapper (was #0C1219) */
+  --color-surface-mid:  #1E2835;
+  --color-surface-alt:  #26323F;
+
+  /* ── CATEGORY CHART PALETTE (qualitative; canonical) ──
+     Ordered for maximum separation under common CVD: the first FIVE
+     (teal, gold, iris, red, steel) stay distinct under protan/deutan/tritan;
+     6–8 are near-duplicates once color-blind, so beyond ~5 series meaning must
+     also carry a pattern/shape/label (never color alone). Category is SEPARATE
+     from severity (see --color-severity-* below). Same order in both themes;
+     light theme darkens each for ≥3:1 on the vellum canvas. Consumers read
+     --color-chart-N directly. See docs/design-tokens.md > Chart palette. */
+  --color-chart-1: #3A9E8E;  /* teal   (canonical accent) */
+  --color-chart-2: #C9983C;  /* gold   (warm) */
+  --color-chart-3: #8B7AAE;  /* iris   (purple — CVD-distinct) */
+  --color-chart-4: #C45B5B;  /* red    (warm-red) */
+  --color-chart-5: #637D8A;  /* steel  (desaturated blue) */
+  --color-chart-6: #5CBDAD;  /* teal-light (needs pattern past here) */
+  --color-chart-7: #D9B060;  /* amber */
+  --color-chart-8: #DED1BC;  /* vellum */
+
+  /* ── SEVERITY CHART SCALE (sequential meaning; NOT category) ──
+     For risk/status series only. Aliases the status semantics so charts and
+     badges agree. Pair with a shape/label — never severity by hue alone. */
+  --color-severity-ok:       var(--color-success);
+  --color-severity-info:     var(--color-chart-5);   /* steel — neutral */
+  --color-severity-warning:  var(--color-warning);
+  --color-severity-danger:   var(--color-danger);
+
+  /* ══════════════════════════════════════════════════════════
+     COMPATIBILITY — partially migrated, do not remove wholesale.
+     Legacy primitive scales that were exact duplicates of the canonical
+     scales above. Each aliases its canonical token (single source of
+     truth). Most shades had zero consumers repo-wide (no migration ever
+     happened for them — they were just never adopted) and were removed
+     (2026-08 cleanup, verified via repo-wide grep for var(--color-scribal/
+     -proof/-ink and for the Tailwind utility classes they'd back). Two
+     shades are still real consumers and must stay:
+       --color-proof-400  → used by src/pages/ProofLandingPage.tsx (text-proof-400)
+       --color-ink-900    → used by --btn-primary-fg below, and by the
+                             text-ink-900 utility in src/components/sign/ui.tsx
+                             and src/pages/SignPage.tsx
+     ══════════════════════════════════════════════════════════ */
+  --color-proof-400: var(--color-teal-400);
+  --color-ink-900: var(--color-slate-900);
+}
+
+/* ========================================
+   Prevent Mobile Horizontal Scroll & Overscroll
+   ======================================== */
+html {
+  scroll-behavior: smooth;
+  font-size: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+html, body {
+  /* overscroll-behavior-x stops the horizontal rubber-band on trackpads/touch
+     without creating a scroll container. No overflow-x:hidden here — that hid
+     real overflow bugs and clipped focus rings, menus, and shadows, and broke
+     position:sticky. Real overflow sources are fixed at their component. */
+  overscroll-behavior-x: none;
+}
+
+/* ========================================
+   Text Selection Policy
+   ========================================
+   Default: text is selectable (the browser default), so anything a user might
+   copy into a support request just works — dialog and article content,
+   status/error messages, table values, identifiers, badges, report metadata,
+   and form values. Non-selectability is OPT-IN and applied only to genuinely
+   decorative or pure control-chrome text.
+
+   `user-select` inherits, so setting it on a container covers its descendants
+   without a `*` selector, and a nested `[data-select="text"]` can opt a subtree
+   back in — no `!important` needed.
+
+   Opt-in hooks:
+     .is-nonselectable / [data-select="none"] / .no-select  → not selectable
+     [data-select="text"] / .selectable                     → force selectable */
+
+.is-nonselectable,
+[data-select="none"],
+.no-select,
+
+/* Interactive controls — the label is chrome, not copyable content */
+button,
+[role="button"],
+[role="tab"],
+[role="tablist"],
+[role="menu"],
+[role="menubar"],
+[role="menuitem"],
+[role="option"],
+[role="switch"],
+[role="slider"],
+[role="toolbar"],
+[role="progressbar"],
+
+/* Genuinely decorative / non-content (svg covers icon & chart glyph text) */
+svg,
+.icon,
+[aria-hidden="true"],
+.ambient-bg,
+.skip-link,
+.back-to-top,
+.loading-spinner-svg {
+  -webkit-user-select: none; /* Safari < 16.4 still requires the prefix */
+  user-select: none;
+}
+
+/* Force-selectable: opt a subtree back in (e.g. content inside chrome). */
+[data-select="text"],
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ========================================
+   Responsive Typography Scale
+   ======================================== */
+:root {
+  /* ── TYPOGRAPHY ─────────────────────────────────────── */
+  /* Family hierarchy. Each brand family is followed by its metric-matched
+     fallback face (defined above) so unstyled/loading text holds the same box. */
+  --font-display: 'WritersLogic Display', 'WritersLogic Display Fallback', 'Georgia', 'Times New Roman', serif;
+  --font-body: 'Source Serif 4', 'Source Serif 4 Fallback', 'Georgia', 'Times New Roman', serif;
+  --font-ui: 'DM Sans', 'DM Sans Fallback', system-ui, 'Helvetica Neue', 'Arial', sans-serif;
+  --font-ui-wide: 'DM Sans', 'DM Sans Fallback', system-ui, 'Helvetica Neue', 'Arial', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Courier New', monospace;
+
+  --font-ui-wide-weight: 500;
+  --font-ui-wide-tracking: 0.16em;
+
+  /* ── TYPE SCALE (modular) ───────────────────────────── */
+  --text-xs:  0.8125rem; /* 13px — 12px was too small to read comfortably;
+                            rises again to 14px above 1330px (responsive.css) */
+  --text-sm:  0.875rem;  /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-md:  1.0625rem; /* 17px */
+  --text-lg:  1.3125rem; /* 21px */
+  /* Display sizes are fluid: scale from a readable mobile min up to the
+     desktop max via viewport width. Avoids overflow on small screens
+     without relying on shrinking the root font-size. */
+  --text-xl:  clamp(1.25rem, 1.05rem + 0.8vw, 1.6875rem);  /* 20 → 27px */
+  --text-2xl: clamp(1.5rem,  1.2rem  + 1.25vw, 2.1875rem); /* 24 → 35px */
+  --text-3xl: clamp(1.75rem, 1.25rem + 2.1vw, 2.9375rem);  /* 28 → 47px */
+  --text-4xl: clamp(2rem,    1.2rem  + 3.4vw, 3.875rem);   /* 32 → 62px */
+  --text-5xl: clamp(2.25rem, 1rem    + 5.2vw, 5.125rem);   /* 36 → 82px */
+
+  /* ── LETTER SPACING ─────────────────────────────────── */
+  --track-loose:    0.16em;
+  --track-wide:     0.08em;
+  --track-normal:   0.01em;
+  --track-tight:   -0.01em;
+  --track-tighter: -0.025em;
+
+  /* ── LINE HEIGHT ────────────────────────────────────── */
+  --lead-flat:   1.0;
+  --lead-tight:  1.12;
+  --lead-snug:   1.28;
+  --lead-normal: 1.55;
+  --lead-loose:  1.75;
+
+  /* ── FONT WEIGHTS ───────────────────────────────────── */
+  --weight-light:    300;
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ── SPACING — 4px base unit ────────────────────────── */
+  --space-1:  0.25rem;   /* 4px */
+  --space-2:  0.5rem;    /* 8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.25rem;   /* 20px */
+  --space-6:  1.5rem;    /* 24px */
+  --space-8:  2rem;      /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+  --space-20: 5rem;      /* 80px */
+  --space-24: 6rem;      /* 96px */
+
+  /* Semantic spacing aliases */
+  --space-section:   clamp(3rem, 8vw, 6rem);
+  --space-component: clamp(1.25rem, 3vw, 2.5rem);
+  --space-element:   clamp(0.625rem, 1.5vw, 1.25rem);
+  --space-tight:     0.75rem;
+
+  /* Compat aliases for existing clamp-based references */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+
+  --gap-content:   clamp(0.75rem, 1.5vw, 1rem);
+  --gap-component: clamp(1.25rem, 3vw, 2rem);
+  --gap-section:   clamp(3rem, 8vw, 6rem);
+
+  /* ── BORDER RADIUS ──────────────────────────────────── */
+  --r-0:    0px;
+  --r-1:    2px;
+  --r-2:    4px;
+  --r-3:    8px;
+  --r-pill: 999px;
+
+  /* ── LAYOUT ─────────────────────────────────────────── */
+  --max-width-content: 720px;
+  --max-width-wide:    1100px;
+  --max-width-full:    1400px;
+
+  /* Touch-friendly minimum sizes */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+}
+
+/* ========================================
+   Theme System - Dark Theme (Default)
+   ======================================== */
+:root {
+  /* Category color system - High visibility on dark background */
+  --color-lexical-h: 25;
+  --color-lexical-s: 95%;
+  --color-lexical-l: 65%;
+
+  --color-syntactic-h: 195;
+  --color-syntactic-s: 90%;
+  --color-syntactic-l: 60%;
+
+  --color-rhythm-h: 280;
+  --color-rhythm-s: 80%;
+  --color-rhythm-l: 65%;
+
+  --color-semantic-h: 170;
+  --color-semantic-s: 75%;
+  --color-semantic-l: 55%;
+
+  --color-voice-h: 350;
+  --color-voice-s: 85%;
+  --color-voice-l: 65%;
+
+  --color-coherence-h: 45;
+  --color-coherence-s: 95%;
+  --color-coherence-l: 60%;
+
+  /* Severity alpha values - visible but not overwhelming */
+  --severity-low: 0.15;
+  --severity-medium: 0.22;
+  --severity-high: 0.30;
+  --severity-critical: 0.40;
+
+  /* ══════════════════════════════════════════════════════════
+     SEMANTIC LAYER — dark (role-based; the layer components consume).
+     Light overrides live in [data-theme="light"]. Special contexts
+     (auto-light, high-contrast, print) override the legacy aliases
+     below directly and are intentionally left untouched.
+     See docs/design-tokens.md.
+     ══════════════════════════════════════════════════════════ */
+  --color-bg-canvas:   #17212D;                     /* softened dark (was #0C1219 slate-950 — too near-black) */
+  --color-bg-surface:  #26323F;                     /* cards sit above the canvas */
+  --color-bg-elevated: #33424F;                     /* = slate-700-ish */
+  --color-bg-inset:    #1E2835;                     /* recessed, just below the canvas step */
+  --color-text-primary:   #E4E8EC;                  /* = slate-100 */
+  --color-text-secondary: #8DA3AF;                  /* = slate-300 */
+  --color-text-muted:     #899CA6;                  /* was #788995 — under 4.5:1 on --color-bg-surface after the canvas softening; re-tuned to clear both canvas and surface */
+  --color-border-subtle: rgba(99, 125, 138, 0.15);
+  --color-border-strong: #334A5A;                   /* = slate-600 */
+  --color-action-primary:       #C9983C;            /* = gold-500 */
+  --color-action-primary-hover: #B08530;            /* = gold-600 */
+  --color-focus:   #C9983C;                         /* = gold-500 */
+  --color-success: #3A9E8E;                         /* = teal-400 */
+  --color-warning: #B08530;                         /* = gold-600 */
+  --color-danger:  #C45B5B;                         /* = tamper-500 */
+  --color-info:    #637D8A;                         /* = slate-400 */
+  --color-selection: rgba(58, 158, 142, 0.40);      /* teal-400 tint — clearer than the old muddy gold */
+
+  /* --text-primary: consumed by components; now sourced from the semantic layer
+     (was previously only set by the removed useTheme inline-style palette). */
+  --text-primary: var(--color-text-primary);
+
+  /* ── CORE SURFACES (legacy aliases → semantic layer) ── */
+  --editor-bg:  var(--color-bg-canvas);
+  --editor-text: var(--color-text-primary);
+  --panel-bg:   var(--color-bg-surface);
+  --border-color: var(--color-border-subtle);
+  --hover-bg: rgba(255, 255, 255, 0.04);
+  --active-bg: rgba(255, 255, 255, 0.08);
+
+  /* Text hierarchy (legacy aliases) */
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+
+  /* Accent colors (legacy aliases → semantic layer) */
+  --accent-primary: var(--color-action-primary);
+  --accent-secondary: var(--color-info);
+  --accent-success: var(--color-success);
+  --accent-warning: var(--color-warning);
+  --accent-danger: var(--color-danger);
+
+  /* Focus ring (legacy alias) */
+  --focus-ring: var(--color-focus);
+
+  /* Semantic positive/negative (legacy names → semantic layer) */
+  --color-positive: var(--color-success);
+  --color-positive-text: #5CBDAD;
+  --color-positive-bg: rgba(58, 158, 142, 0.15);
+  --color-negative: var(--color-danger);
+  --color-negative-text: #D48A8A;
+  --color-negative-bg: rgba(196, 91, 91, 0.15);
+  --color-info-text: #8DA3AF;
+  --color-info-bg: rgba(99, 125, 138, 0.15);
+
+  /* NOTE: a --chart-1.."8 semantic alias layer (pointing at --color-chart-*)
+     lived here and was removed in the 2026-08 cleanup — repo-wide grep found
+     zero consumers of --chart-N in any form (var(), Tailwind utility, or
+     arbitrary-value syntax). Actual consumers (e.g.
+     src/components/Analytics/AnalyticsDashboard.tsx) read --color-chart-1..6
+     directly, so that canonical scale is untouched. */
+
+  /* Layer colors (waveform) */
+  --layer-length: hsl(207, 25%, 55%);
+  --layer-syllabic: hsl(168, 45%, 42%);
+  --layer-predictability: hsl(39, 53%, 51%);
+  --layer-complexity: hsl(263, 22%, 58%);
+  --layer-concreteness: hsl(0, 35%, 56%);
+  --layer-originality: hsl(355, 38%, 60%);
+  --layer-rhythm: hsl(168, 35%, 48%);
+  --layer-flow: hsl(37, 40%, 65%);
+  --layer-tone: hsl(207, 20%, 47%);
+
+  /* Status states (legacy aliases → semantic layer) */
+  --status-success: var(--color-success);
+  --status-success-text: #5CBDAD;
+  --status-success-bg: rgba(58, 158, 142, 0.15);
+  --status-warning: var(--color-warning);
+  --status-warning-text: #D9B060;
+  --status-warning-bg: rgba(176, 133, 48, 0.15);
+  --status-danger: var(--color-danger);
+  --status-danger-text: #D48A8A;
+  --status-danger-bg: rgba(196, 91, 91, 0.15);
+  --status-neutral: var(--color-info);
+  --status-neutral-bg: rgba(99, 125, 138, 0.12);
+
+  /* Badges */
+  --badge-accent-bg: rgba(201, 152, 60, 0.18);
+  --badge-accent-text: #E5CFA2;
+
+  /* ── GRADIENT TOKENS ── */
+  /* Action: gold warmth for CTAs */
+  --gradient-primary: linear-gradient(135deg, #C9983C, #DED1BC);
+  --gradient-primary-start: #C9983C;
+  --gradient-primary-end: #DED1BC;
+  --gradient-primary-shadow: rgba(201, 152, 60, 0.3);
+  --gradient-primary-text: #E5CFA2;
+  /* Authority: steel → teal for backgrounds */
+  --gradient-authority: linear-gradient(135deg, #637D8A, #3A9E8E);
+  /* Proof: teal → steel for verification */
+  --gradient-proof: linear-gradient(135deg, #3A9E8E, #637D8A);
+  /* Depth: slate dark → mid for background layers */
+  --gradient-depth: linear-gradient(180deg, #0C1219, #1C2832);
+  /* Warmth: gold → teal cross-brand */
+  --gradient-warmth: linear-gradient(135deg, #C9983C, #3A9E8E);
+
+  /* Gold accent (legacy alias — stays gold-500 in both themes, unlike
+     --color-action-primary which darkens in light) */
+  --accent-gold: var(--color-gold-500);
+
+  /* Surface dark (legacy alias) */
+  --surface-dark: var(--color-bg-canvas);
+
+  /* Uniformity highlights */
+  --uniformity-color: rgba(201, 152, 60, 0.8);
+  --uniformity-bg: rgba(201, 152, 60, 0.25);
+  --uniformity-border: rgba(201, 152, 60, 0.6);
+
+  /* Severity scale */
+  --severity-info-color: hsl(197, 17%, 47%);
+  --severity-medium-color: hsl(207, 25%, 50%);
+  --severity-high-color: hsl(39, 53%, 51%);
+  --severity-critical-color: hsl(0, 35%, 56%);
+
+  /* ── SHADOW SYSTEM (layered depth) ── */
+  /* Rest — grounded, barely there */
+  --shadow-sm:
+    0 1px 2px rgba(12, 18, 25, 0.3),
+    0 2px 4px rgba(12, 18, 25, 0.15);
+  /* Hover — lifts toward user */
+  --shadow-md:
+    0 2px 4px rgba(12, 18, 25, 0.3),
+    0 8px 24px rgba(12, 18, 25, 0.2),
+    0 16px 32px rgba(12, 18, 25, 0.1);
+  /* Elevated — floating */
+  --shadow-lg:
+    0 4px 8px rgba(12, 18, 25, 0.3),
+    0 16px 40px rgba(12, 18, 25, 0.25),
+    0 32px 64px rgba(12, 18, 25, 0.15);
+  /* Branded glows */
+  --shadow-gold: 0 4px 16px rgba(201, 152, 60, 0.2), 0 12px 40px rgba(201, 152, 60, 0.1);
+  --shadow-teal: 0 4px 16px rgba(58, 158, 142, 0.2), 0 12px 40px rgba(58, 158, 142, 0.08);
+  --shadow-steel: 0 4px 16px rgba(99, 125, 138, 0.15), 0 12px 40px rgba(99, 125, 138, 0.08);
+  /* Active/pressed — drops back down */
+  --shadow-active: 0 1px 1px rgba(12, 18, 25, 0.4);
+
+  /* ── SURFACE SYSTEM (token-driven; consumed by .surface & variants) ──
+     Base surfaces are opaque-translucent fills over the smooth backdrop — no
+     backdrop-filter (looks equivalent to a blurred pane, far cheaper). Only
+     .surface-overlay blurs. *-solid values are the no-backdrop-filter /
+     reduced-transparency / high-contrast fallbacks. */
+  --surface-fill:            rgba(20, 23, 30, 0.70);
+  --surface-fill-raised:     var(--color-slate-800);
+  --surface-fill-inset:      rgba(8, 9, 12, 0.30);
+  --surface-fill-overlay:    rgba(14, 18, 24, 0.62);
+  --surface-fill-solid:      rgba(20, 23, 30, 0.96);
+  --surface-border:          rgba(240, 243, 250, 0.09);
+  --surface-border-strong:   rgba(240, 243, 250, 0.18);
+  --surface-accent-fill:     rgba(201, 152, 60, 0.07);
+  --surface-accent-border:   rgba(201, 152, 60, 0.20);
+  --surface-success-fill:    rgba(58, 158, 142, 0.07);
+  --surface-success-border:  rgba(58, 158, 142, 0.20);
+  --surface-danger-fill:     rgba(184, 50, 50, 0.09);
+  --surface-danger-border:   rgba(184, 50, 50, 0.22);
+  --surface-accent-fill-solid:  color-mix(in srgb, var(--color-gold-500) 16%, var(--surface-fill-solid));
+  --surface-success-fill-solid: color-mix(in srgb, #3A9E8E 16%, var(--surface-fill-solid));
+  --surface-danger-fill-solid:  color-mix(in srgb, #B83232 18%, var(--surface-fill-solid));
+  --surface-radius:          12px;
+  --surface-shadow:          var(--shadow-sm);
+  --surface-shadow-raised:   var(--shadow-md);
+  --surface-overlay-blur:    20px;
+
+  /* ── BUTTON / CONTROL SYSTEM (consumed by .btn & variants) ──
+     Variants set only these tokens. Disabled uses a dedicated muted-but-legible
+     pair (not opacity, which can drop text below AA). Focus uses the canonical
+     --focus-ring. Primary fg is dark ink on the bright gold; light theme flips
+     it to off-white on the darker gold (never pure #fff/#000). */
+  --btn-radius:              var(--r-3);
+  --btn-focus-ring:          var(--focus-ring);
+  --btn-primary-bg:          var(--color-action-primary);
+  --btn-primary-bg-hover:    var(--color-action-primary-hover);
+  --btn-primary-fg:          var(--color-ink-900);
+  --btn-secondary-bg:        rgba(240, 243, 250, 0.06);
+  --btn-secondary-bg-hover:  rgba(240, 243, 250, 0.12);
+  --btn-secondary-fg:        var(--color-text-primary);
+  --btn-secondary-border:    var(--surface-border-strong);
+  --btn-ghost-fg:            var(--color-text-primary);
+  --btn-ghost-bg-hover:      rgba(240, 243, 250, 0.08);
+  --btn-danger-bg:           #9E3B3B;  /* darker than --color-danger so off-white label hits >=4.5:1 */
+  --btn-danger-bg-hover:     #863030;
+  --btn-danger-fg:           #F7EDEA;
+  --btn-link-fg:             var(--color-teal-300);
+  --btn-link-fg-hover:       var(--color-teal-light);
+  --btn-disabled-bg:         rgba(240, 243, 250, 0.05);
+  --btn-disabled-fg:         var(--color-text-muted);
+  --btn-disabled-border:     var(--surface-border);
+
+  /* Scrollbar */
+  --scrollbar-track: #0C1219;
+  --scrollbar-thumb: #273744;
+  --scrollbar-thumb-hover: #637D8A;
+
+  /* ── MOTION TOKENS ── */
+  --dur-instant: 80ms;
+  --dur-fast:    150ms;
+  --dur-default: 300ms;
+  --dur-slow:    500ms;
+  --dur-enter:   700ms;
+
+  --ease-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-stamp:   cubic-bezier(0.34, 1.2, 0.64, 1);
+  --ease-out:     cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in:      cubic-bezier(0.4, 0.0, 1.0, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-linear:  linear;
+
+  /* Z-index (depth layers) */
+  --z-void:     -1;
+  --z-ground:   0;
+  --z-raised:   10;
+  --z-elevated: 20;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-alert:    500;
+  /* Skip link must sit above app chrome when focused (a11y); the film-grain
+     overlay is a deliberate top-most, pointer-events:none decorative layer. */
+  --z-skip-link: 1000;
+  --z-grain:     9999;
+
+  /* Legacy compat */
+  --z-base: 0;
+  --z-toast: 500;
+
+  color-scheme: dark;
+}
+
+/* ========================================
+   Light Theme
+   ======================================== */
+[data-theme="light"] {
+  --color-lexical-l: 45%;
+  --color-syntactic-l: 40%;
+  --color-rhythm-l: 45%;
+  --color-semantic-l: 35%;
+  --color-voice-l: 45%;
+  --color-coherence-l: 40%;
+  --severity-low: 0.12;
+  --severity-medium: 0.18;
+  --severity-high: 0.25;
+  --severity-critical: 0.35;
+  /* ── SEMANTIC LAYER — light overrides ── */
+  --color-bg-canvas:   #F5F0E6;
+  --color-bg-surface:  #EDE5D6;
+  --color-bg-elevated: #F4F1E5;
+  --color-bg-inset:    #FDFCF8;
+  --color-text-primary:   #0C1219;
+  --color-text-secondary: #3B4F5A;
+  --color-text-muted:     #4E6572;
+  --color-border-subtle: #CABDA2;
+  --color-border-strong: #B5A88A;
+  --color-action-primary:       #7A5B1C;
+  --color-action-primary-hover: #957026;
+  --color-focus:   #1C5A50;   /* dark teal — >=3:1 on the vellum canvas (gold was 2.3:1) */
+  --color-success: #2D7D70;
+  --color-warning: #7A5B1C;
+  --color-danger:  #8A3030;
+  --color-info:    #4E6572;
+  --color-selection: rgba(58, 158, 142, 0.28);
+
+  /* ── legacy aliases → semantic (light) ── */
+  --editor-bg:  var(--color-bg-canvas);
+  --editor-text: var(--color-text-primary);
+  --panel-bg:   var(--color-bg-surface);
+  --border-color: var(--color-border-subtle);
+  --hover-bg: rgba(0, 0, 0, 0.04);
+  --active-bg: rgba(0, 0, 0, 0.08);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --accent-primary: var(--color-action-primary);
+  --accent-secondary: #3B4F5A;  /* no matching semantic; literal preserved */
+  --accent-success: var(--color-success);
+  --accent-warning: var(--color-warning);
+  --accent-danger: var(--color-danger);
+  --color-positive: var(--color-success);
+  --color-positive-text: #184540;
+  --color-positive-bg: rgba(45, 125, 112, 0.12);
+  --color-negative: var(--color-danger);
+  --color-negative-text: #8A3030;
+  --color-negative-bg: rgba(138, 48, 48, 0.12);
+  --color-info-text: #2A3A45;
+  --color-info-bg: rgba(78, 101, 114, 0.12);
+  /* Category palette (light) — same order as dark, darkened for ≥3:1 on vellum.
+     Resolves automatically per theme since consumers read --color-chart-N
+     directly (the --chart-N alias layer was removed, see the dark-theme
+     block above). */
+  --color-chart-1: #2D7D70;  /* teal */
+  --color-chart-2: #7A5B1C;  /* gold */
+  --color-chart-3: #6B5B8A;  /* iris */
+  --color-chart-4: #8A3030;  /* red */
+  --color-chart-5: #3B4F5A;  /* steel */
+  --color-chart-6: #225E54;  /* teal-dark */
+  --color-chart-7: #957026;  /* amber */
+  --color-chart-8: #7D7050;  /* vellum-dark */
+  --layer-length: hsl(207, 25%, 40%);
+  --layer-syllabic: hsl(168, 45%, 32%);
+  --layer-predictability: hsl(39, 53%, 38%);
+  --layer-complexity: hsl(263, 22%, 45%);
+  --layer-concreteness: hsl(0, 35%, 42%);
+  --layer-originality: hsl(355, 38%, 45%);
+  --layer-rhythm: hsl(168, 35%, 35%);
+  --layer-flow: hsl(37, 40%, 48%);
+  --layer-tone: hsl(207, 20%, 38%);
+  --status-success: var(--color-success);
+  --status-success-text: #184540;
+  --status-success-bg: rgba(45, 125, 112, 0.12);
+  --status-warning: var(--color-warning);
+  --status-warning-text: #5E4514;
+  --status-warning-bg: rgba(122, 91, 28, 0.12);
+  --status-danger: var(--color-danger);
+  --status-danger-text: #8A3030;
+  --status-danger-bg: rgba(138, 48, 48, 0.12);
+  --status-neutral: var(--color-info);
+  --status-neutral-bg: rgba(78, 101, 114, 0.1);
+  --badge-accent-bg: rgba(122, 91, 28, 0.12);
+  --badge-accent-text: #7A5B1C;
+  --gradient-primary: linear-gradient(135deg, #7A5B1C, #957026);
+  --gradient-primary-start: #7A5B1C;
+  --gradient-primary-end: #957026;
+  --gradient-primary-shadow: rgba(122, 91, 28, 0.25);
+  --surface-dark: #EDE5D6;
+  --uniformity-color: rgba(176, 133, 48, 0.85);
+  --uniformity-bg: rgba(176, 133, 48, 0.15);
+  --uniformity-border: rgba(176, 133, 48, 0.5);
+  --severity-info-color: hsl(197, 17%, 38%);
+  --severity-medium-color: hsl(207, 25%, 40%);
+  --severity-high-color: hsl(39, 53%, 40%);
+  --severity-critical-color: hsl(0, 85%, 42%);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-gold: 0 0 0 1px #9B7318, 0 4px 16px rgba(155, 115, 24, 0.18);
+  --scrollbar-track: #F4F1E5;
+  --scrollbar-thumb: #CFC9B8;
+  --scrollbar-thumb-hover: #E3DED0;
+
+  /* ── SURFACE SYSTEM (light / vellum) — warm off-white, never pure #fff ── */
+  --surface-fill:            rgba(252, 250, 244, 0.72);
+  --surface-fill-raised:     #FCFAF4;
+  --surface-fill-inset:      rgba(60, 50, 30, 0.05);
+  --surface-fill-overlay:    rgba(252, 250, 244, 0.82);
+  --surface-fill-solid:      #FBF7EE;
+  --surface-border:          rgba(40, 34, 20, 0.12);
+  --surface-border-strong:   rgba(40, 34, 20, 0.26);
+  --surface-accent-fill:     rgba(201, 152, 60, 0.12);
+  --surface-accent-border:   rgba(155, 115, 24, 0.40);
+  --surface-success-fill:    rgba(58, 158, 142, 0.12);
+  --surface-success-border:  rgba(45, 125, 110, 0.36);
+  --surface-danger-fill:     rgba(184, 50, 50, 0.10);
+  --surface-danger-border:   rgba(160, 40, 40, 0.34);
+  --surface-shadow:          0 1px 2px rgba(60, 50, 35, 0.08), 0 4px 12px rgba(60, 50, 35, 0.06);
+  --surface-shadow-raised:   0 2px 6px rgba(60, 50, 35, 0.10), 0 10px 30px rgba(60, 50, 35, 0.08);
+
+  /* ── BUTTON / CONTROL SYSTEM (light) — off-white on darker gold ── */
+  --btn-primary-fg:          #FBF7EE;
+  --btn-secondary-bg:        rgba(40, 34, 20, 0.05);
+  --btn-secondary-bg-hover:  rgba(40, 34, 20, 0.10);
+  --btn-ghost-bg-hover:      rgba(40, 34, 20, 0.07);
+  --btn-danger-fg:           #FBF7EE;
+  --btn-danger-bg-hover:     #6E2626;
+  --btn-link-fg:             var(--color-teal-600);
+  --btn-link-fg-hover:       var(--color-teal-500);
+  --btn-disabled-bg:         rgba(40, 34, 20, 0.06);
+
+  color-scheme: light;
+}
+
+/* NOTE: the former `@media (prefers-color-scheme: light) :root:not([data-theme])`
+   block was removed. It defined a SECOND, divergent light palette (#FDFCF8 /
+   #07070A) that only applied when <html> had no data-theme — but data-theme is
+   now always set before paint (index.html bootstrap + themeStore), so that block
+   was dead. System preference is resolved in JS to an explicit data-theme, so
+   [data-theme="light"] above is the single canonical light theme. */
+
+:root {
+  /* Root font-size lives solely on `html` (100% = a stable 16px that respects
+     the user's browser setting). It is NOT set here or shrunk on mobile — that
+     would rescale every rem-based size site-wide. Responsiveness comes from the
+     fluid clamp() type tokens instead. */
+  font-family: var(--font-body);
+  line-height: var(--lead-normal);
+  font-weight: 400;
+
+  color: var(--editor-text);
+  background-color: var(--editor-bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100vh; /* fallback for browsers without dvh */
+  min-height: 100dvh; /* tracks the visible viewport through mobile toolbar show/hide */
+  font-family: var(--font-body);
+}
+
+/* Body copy default: readable ~17px, on the root (16px), so headings/utilities
+   are not inflated. text-wrap: pretty tidies orphans/rivers in long copy. */
+body {
+  font-size: 1.0625rem;
+  text-wrap: pretty;
+}
+

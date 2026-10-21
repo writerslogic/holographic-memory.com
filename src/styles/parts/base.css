@@ -1,0 +1,179 @@
+/* base.css — extracted from index.css (order-preserving; Tailwind v4
+   inlines these @imports in order, so the compiled output is unchanged).
+   See src/index.css for the module map. */
+
+/* ── Inline, interactive & list element defaults ─────────────
+   In @layer base so an explicit Tailwind utility (text-sm, leading-*, …) on any
+   of these elements wins — an unlayered rule here would beat every utility. The
+   inherit values keep the fluid scale cascading and stop Preflight clobbering. */
+@layer base {
+  span, a, button, input, textarea, select {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  ul, ol {
+    font-size: inherit;
+    line-height: var(--lead-normal);
+  }
+}
+
+/* ── Headline typography ───────────────────────────────── */
+/* Fluid responsive scale using clamp(). Display font with  */
+/* tighter leading for h1–h3, UI font for h4–h6.           */
+/* Heading element defaults live in @layer base so Tailwind text-*, font-*,
+   leading-*, and tracking-* utilities on a heading override them (utilities
+   sit in a higher cascade layer). Without this wrapper these unlayered rules
+   would beat every heading utility site-wide. */
+@layer base {
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    line-height: var(--lead-tight);
+    /* WritersLogic Display bakes in the restrained SOFT 20 / WONK 0, so no
+       runtime font-variation-settings are needed. opsz still tracks the rendered
+       size (≈72+ on the hero) via optical sizing; per-heading font-weight drives
+       wght. Balance headings so line breaks are even (where supported). */
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  h4, h5, h6 {
+    font-family: var(--font-ui);
+    line-height: var(--lead-snug);
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 5vw + 1rem, 5.5rem);
+    /* 350, not 200: a hairline display weight loses its thin strokes on the dark
+       canvas. Still light/elegant, but legible. */
+    font-weight: 350;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 3vw + 1rem, 3.5rem);
+    /* RESOLVED (typography phase): the mono-uppercase h2 is a DELIBERATE
+       technical/spec brand treatment — verified in use on the developer/protocol
+       pages (via .page-heading, which only sets size/weight and inherits this
+       mono-uppercase). Kept as the default. Prose/marketing titles opt out with
+       the display serif (e.g. the section-heading utility or a font-serif
+       utility, as the homepage hero does — utilities win over this @layer base
+       rule). See docs/design-tokens.md > Typography roles. */
+    font-family: var(--font-mono);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  h3 {
+    font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+    font-weight: 400;
+  }
+
+  h4 {
+    font-size: clamp(1.25rem, 1.5vw + 1rem, 1.75rem);
+  }
+
+  h5 {
+    font-size: clamp(1.125rem, 1vw + 0.875rem, 1.375rem);
+  }
+
+  h6 {
+    font-size: clamp(1rem, 0.75vw + 0.875rem, 1.25rem);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Kept unlayered on purpose: a specificity-based override for pill/badge
+   paragraphs that should win over text-* utilities. */
+p.rounded-full {
+  font-size: 0.8rem;
+}
+
+/* ── Body copy & inline elements ─────────────────────────── */
+/* All sizes expressed as clamp(min, preferred, max) so they  */
+/* scale fluidly between ~320px and ~1400px viewports.        */
+
+@layer base {
+  p, li, dd, dt {
+    font-size: clamp(1rem, 0.5vw + 0.875rem, 1.125rem);
+    line-height: var(--lead-normal);
+  }
+}
+
+/* Intro / lede paragraph — slightly larger body copy. Canonical: .lead */
+@utility lead {
+  font-size: clamp(1.125rem, 0.75vw + 0.9rem, 1.375rem);
+  line-height: var(--lead-loose);
+}
+
+/* De-emphasised text — captions, footnotes, meta (HTML elements).
+   In @layer base (same reasoning as the heading block above) so a Tailwind
+   text-* utility on one of these elements wins instead of silently losing to
+   this unlayered rule — several figcaption/caption sites already carry a
+   text-sm that was being overridden before this wrapper was added. */
+@layer base {
+  small,
+  figcaption,
+  caption {
+    font-size: clamp(0.8125rem, 0.25vw + 0.75rem, 0.9375rem);
+    line-height: var(--lead-normal);
+  }
+}
+
+/* Blockquote pull-quote */
+@layer base {
+  blockquote {
+    font-size: clamp(1.125rem, 1vw + 0.875rem, 1.5rem);
+    line-height: var(--lead-loose);
+  }
+}
+
+/* Form labels & legends. In @layer base — several forms already apply
+   text-sm directly to <label>/<legend> expecting it to win. */
+@layer base {
+  label,
+  legend {
+    font-size: clamp(0.875rem, 0.4vw + 0.8rem, 1rem);
+  }
+}
+
+/* Table body cells. In @layer base — several tables already apply
+   text-xs/text-sm directly to <td>/<th> expecting it to win. */
+@layer base {
+  td, th {
+    font-size: clamp(0.875rem, 0.4vw + 0.8rem, 1rem);
+  }
+}
+
+/* Inline code & keyboard shortcuts */
+@layer base {
+  code, kbd, samp {
+    font-size: clamp(0.8125rem, 0.35vw + 0.75rem, 0.9375rem);
+  }
+
+  /* Code blocks */
+  pre {
+    font-size: clamp(0.8125rem, 0.4vw + 0.75rem, 0.9375rem);
+  }
+}
+
+/* ── Monospace elements ────────────────────────────────── */
+/* Disable ligatures in code contexts for clarity.         */
+code, pre, kbd, samp, .font-mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+pre {
+  overflow-x: auto;
+}
+
+
+/* The @theme accents are tuned for the light theme; as text on dark surfaces they
+   fall under 4.5:1 (gold 3.4, teal 4.3, tamper 3.5). Dark text uses the lighter steps. */
+:root:not([data-theme="light"]) .text-gold { color: var(--color-gold-500); }
+:root:not([data-theme="light"]) .text-teal { color: var(--color-teal-light); }
+:root:not([data-theme="light"]) .text-tamper-500 { color: #E58C8C; }
+:root:not([data-theme="light"]) .text-steel-500 { color: var(--color-text-secondary); }

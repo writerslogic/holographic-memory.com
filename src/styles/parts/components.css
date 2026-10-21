@@ -1,0 +1,967 @@
+/* components.css — extracted from index.css (order-preserving; Tailwind v4
+   inlines these @imports in order, so the compiled output is unchanged).
+   See src/index.css for the module map. */
+
+/* ════════════════════════════════════════════════════════════
+   TYPE ROLES — the canonical role → utility map. These utilities
+   already exist in this file and are in real use; treat them as the
+   role vocabulary rather than inventing parallel names. Sizes are
+   fluid clamp() tokens (responsive without shrinking the root).
+   See docs/design-tokens.md > Type roles.
+
+     display / hero    → serif display set inline on the homepage hero
+     page title (h1)   → .page-heading      (24 uses)
+     section heading   → .section-heading   (64), .section-heading-center (15)
+     card heading      → .card-heading (21), .card-title (44), .panel-heading (16)
+     body / long-form  → the <p>/prose element defaults + `.prose`
+     lede / intro      → .lead              (23 uses)
+     caption / figure  → .text-caption      (23 uses)
+     eyebrow / kicker  → .eyebrow (42), .eyebrow-sm (4)
+     small / muted     → .text-muted-sm     (21 uses)
+     technical id/mono → .mono              (146 uses)
+
+   (A prior parallel set — display-hero, page-title, body, lede,
+   caption, ui-label, technical-identifier — was removed: all seven
+   had zero real class usages and duplicated the roles above.)
+   ════════════════════════════════════════════════════════════ */
+
+/* Global focus-visible styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Selection — theme-aware (was a hardcoded gold tint with light text, which was
+   illegible in light mode). */
+::selection {
+  background: var(--color-selection);
+  color: var(--color-text-primary);
+}
+
+/* Remove focus outline for mouse/touch users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+#root {
+  min-height: 100vh; /* fallback for browsers without dvh */
+  min-height: 100dvh; /* tracks the visible viewport through mobile toolbar show/hide */
+  /* The single intentional horizontal-overflow boundary. `clip` (not hidden/auto)
+     does not create a scroll container, so overflow-y stays visible and
+     position:sticky, dropdown menus, and focus rings keep working — while stray
+     horizontal overflow (decorative bleeds, intentionally wide scroll-tables) can
+     never produce a page-level horizontal scrollbar. Genuinely scrollable content
+     (e.g. wide tables) still scrolls inside its own overflow-x:auto wrapper. */
+  overflow-x: clip;
+}
+
+/* Landing page layout */
+@utility landing-layout {
+  min-height: 100vh; /* fallback for browsers without dvh */
+  min-height: 100dvh; /* tracks the visible viewport through mobile toolbar show/hide */
+  overflow-y: auto;
+  position: relative;
+}
+
+@utility section-x {
+  padding-inline: clamp(1rem, 5vw, 3rem);
+
+  @media (min-width: 768px) {
+    padding-inline: clamp(2rem, 6vw, 4rem);
+  }
+}
+
+/* The diagonal "SAMPLE" wash on the specimen report. This is a graphic, not
+   text to read, so it sits outside the type scale on purpose — it is a utility
+   rather than an inline arbitrary size so the scale stays the only place type
+   sizes are chosen. */
+@utility watermark-stamp {
+  font-size: clamp(7.5rem, 12vw, 10rem);
+}
+
+@utility section-heading {
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+@utility section-description {
+  color: var(--text-secondary);
+  max-width: 42rem;
+  margin-inline: auto;
+  line-height: var(--lead-normal);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTON / CONTROL PRIMITIVES — one base, token-driven variants
+   ═══════════════════════════════════════════════════════════
+   Block controls: .btn-primary .btn-secondary .btn-ghost .btn-danger
+   (bare .btn = neutral secondary). Inline: .btn-link (text link). Icon-only:
+   .btn-icon — MUST carry an aria-label (CSS can't enforce a name; see
+   DESIGN_SYSTEM.md). States: rest / hover / active /
+   focus-visible / disabled / loading, both themes, high-contrast,
+   reduced-motion, forced-colors. No transition:all; no [style*=…] selectors.
+   Legacy .btn-secondary-glow is folded in as a @alias. */
+
+.btn,
+:is(.btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon, .btn-secondary-glow) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding: clamp(0.6rem, 1.2vw, 1rem) clamp(1.25rem, 3vw, 2.25rem);
+  border-radius: var(--btn-radius);
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-weight: 600;
+  line-height: 1.1;
+  min-height: var(--touch-target-min);
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              filter var(--dur-fast) var(--ease-out);
+}
+
+/* Canonical focus — outline is not clipped by an overflow:hidden ancestor. */
+:is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon, .btn-link, .btn-secondary-glow):focus-visible {
+  outline: 2px solid var(--btn-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Variants — set color tokens only. */
+.btn,
+.btn-secondary,
+.btn-secondary-glow { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); border-color: var(--btn-secondary-border); }
+.btn-primary { background: var(--btn-primary-bg); color: var(--btn-primary-fg); }
+.btn-ghost { background: transparent; color: var(--btn-ghost-fg); border-color: var(--color-border-strong); }
+.btn-danger { background: var(--btn-danger-bg); color: var(--btn-danger-fg); }
+
+/* Icon-only — square target; needs an aria-label for its accessible name. */
+.btn-icon {
+  padding: 0;
+  width: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  background: transparent;
+  color: var(--btn-ghost-fg);
+}
+
+/* Inline text-link button — no box, underline, thin focus target. */
+.btn-link {
+  display: inline;
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--btn-link-fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* Hover (only where hover exists; never on disabled). */
+@media (hover: hover) {
+  .btn-primary:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--btn-primary-bg-hover); }
+  :is(.btn, .btn-secondary, .btn-secondary-glow):hover:not(:disabled):not([aria-disabled="true"]) { background: var(--btn-secondary-bg-hover); }
+  :is(.btn-ghost, .btn-icon):hover:not(:disabled):not([aria-disabled="true"]) { background: var(--btn-ghost-bg-hover); }
+  .btn-danger:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--btn-danger-bg-hover); }
+  .btn-link:hover { color: var(--btn-link-fg-hover); text-decoration-thickness: 2px; }
+  :is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon, .btn-secondary-glow):active:not(:disabled):not([aria-disabled="true"]) { scale: 0.98; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon):active { scale: 1; }
+}
+
+/* Disabled — muted but legible (dedicated tokens, not opacity); no hover. */
+:is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon, .btn-secondary-glow):is(:disabled, [aria-disabled="true"]) {
+  background: var(--btn-disabled-bg);
+  color: var(--btn-disabled-fg);
+  border-color: var(--btn-disabled-border);
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Loading — spinner + busy cursor; label stays for context. `spin` keyframe is
+   kept as a calm spin under reduced motion (motion policy, Prompt 9). */
+:is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon)[aria-busy="true"] {
+  cursor: wait;
+  pointer-events: none;
+}
+:is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon)[aria-busy="true"]::before {
+  content: '';
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+}
+
+/* High contrast — stronger borders + thicker focus. */
+@media (prefers-contrast: more) {
+  :is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon) { border-color: currentColor; }
+  :is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon, .btn-link):focus-visible { outline-width: 3px; }
+}
+
+/* Forced colors — map to system control colors, keep focus visible. */
+@media (forced-colors: active) {
+  :is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon) { border: 1px solid ButtonText; }
+  .btn-link { color: LinkText; }
+  :is(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-icon, .btn-link):focus-visible { outline: 2px solid Highlight; }
+}
+
+/* Stacked CTA buttons: uniform, comfortably wide, and touch-friendly when they
+   stack on mobile; natural width in a centered row from the sm breakpoint up.
+   Children are .btn-* actions. In @layer components so text-size and width
+   utilities on a child still win if a specific stack needs to opt out. */
+@layer components {
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .cta-stack > * {
+    width: 100%;
+    max-width: 20rem;
+  }
+
+  @media (width >= 40rem) {
+    .cta-stack {
+      flex-direction: row;
+    }
+
+    .cta-stack > * {
+      width: auto;
+      max-width: none;
+    }
+  }
+}
+
+@utility section-pad {
+  padding-block: clamp(3rem, 8vw, 5rem);
+  padding-inline: clamp(1rem, 4vw, 2rem);
+}
+
+@utility link-gold {
+  color: var(--color-gold-400);
+  &:hover { color: var(--color-gold-300); }
+}
+
+@utility card-title {
+  font-size: clamp(1.1rem, 1.5vw + 0.5rem, 1.35rem);
+  font-weight: 500;
+  color: white;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+@utility card-heading {
+  font-size: clamp(1rem, 1.5vw + 0.25rem, 1.2rem);
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+@utility text-caption {
+  font-size: clamp(0.8125rem, 1vw + 0.375rem, 0.875rem);
+  color: var(--text-muted);
+  line-height: var(--lead-normal);
+}
+
+/* .surface-panel / .surface-raised / .surface-inset now live in the SURFACE
+   SYSTEM block below (token-driven, single implementation). */
+
+/* ── MOTION: SCROLL REVEAL ──────────────────────────────── */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--dur-enter) var(--ease-default), transform var(--dur-enter) var(--ease-default);
+  &.visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── BACKGROUND ATMOSPHERE ──────────────────────────────── */
+@utility bg-grain {
+  position: relative;
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.015;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: var(--z-grain);
+  }
+}
+
+@utility page-heading {
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+@utility panel-heading {
+  font-size: clamp(1.1rem, 1.5vw + 0.5rem, 1.35rem);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility text-muted-sm {
+  font-size: clamp(0.8125rem, 0.5vw + 0.75rem, 0.9375rem);
+  color: var(--text-muted);
+  line-height: var(--lead-normal);
+}
+
+@utility section-intro {
+  font-size: clamp(0.875rem, 1vw + 0.625rem, 1rem);
+  color: var(--text-muted);
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-inline: 0.5rem;
+}
+
+/* Inline text link — stays in the text flow. No forced 44px target: WCAG 2.5.5
+   exempts inline links, and a min-height here breaks line boxes and CSS columns.
+   Tap spacing for link lists comes from the list's row gap, not the link. */
+@utility link-inline {
+  transition: color var(--dur-fast) var(--ease-out);
+  border-radius: var(--r-2);
+  &:hover { color: var(--color-gold-400); }
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    color: var(--color-gold-400);
+  }
+}
+
+@utility overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+@utility section-header {
+  text-align: center;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
+@utility eyebrow-sm {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-slate-300);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+
+@utility section-heading-center {
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+@utility grain-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+@utility grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+@utility section-block {
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+
+@utility report-card {
+  background: #f9fafb;
+  border-radius: var(--r-2);
+  padding: clamp(1rem, 3vw, 1.25rem);
+  border: 1px solid #f3f4f6;
+}
+
+@utility content-center {
+  max-width: 56rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+@utility fade-section {
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.01), transparent);
+}
+
+/* ── Manuscript Atmosphere ──────────────────────────────
+   A single full-viewport layer of organic, non-repeating
+   gradient washes. Evokes ink and vellum without tiling.
+   Each "zone" blends into the next across sections.
+   ─────────────────────────────────────────────────────── */
+.landing-layout::before,
+main.relative::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: soft-light;
+  opacity: 0.45;
+  background:
+    /* Top-left: warm iron-gall ink wash, like a quill test */
+    radial-gradient(ellipse 60% 40% at 8% 12%, rgba(91, 127, 164, 0.12) 0%, transparent 70%),
+    /* Top-right: faint gold leaf bleed (rgba(212,168,67,*) == --color-gold-400) */
+    radial-gradient(ellipse 45% 35% at 88% 8%, color-mix(in srgb, var(--color-gold-400) 8%, transparent) 0%, transparent 65%),
+    /* Mid-left: deeper ink pooling, like a margin annotation */
+    radial-gradient(ellipse 30% 50% at 3% 55%, rgba(58, 85, 112, 0.10) 0%, transparent 60%),
+    /* Center-right: warm parchment glow */
+    radial-gradient(ellipse 50% 40% at 92% 45%, color-mix(in srgb, var(--color-gold-400) 6%, transparent) 0%, transparent 55%),
+    /* Bottom: dispersed ink wash fading upward */
+    radial-gradient(ellipse 70% 30% at 40% 95%, rgba(91, 127, 164, 0.08) 0%, transparent 65%),
+    /* Bottom-right: subtle warmth */
+    radial-gradient(ellipse 35% 25% at 80% 88%, color-mix(in srgb, var(--color-gold-400) 5%, transparent) 0%, transparent 55%);
+}
+
+/* ========================================
+   Landing Page Responsive Typography
+   ======================================== */
+
+/* Custom xs breakpoint for Tailwind (480px) */
+@media (min-width: 480px) {
+  .xs\:inline {
+    display: inline !important;
+  }
+  .xs\:flex-row {
+    flex-direction: row !important;
+  }
+  .xs\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ========================================
+   Enhanced Button Hover Effects
+   ======================================== */
+
+/* Legacy .btn-primary-glow / .btn-secondary-glow and the inline-style
+   [style*="gradient"] hover selectors were removed: glow is unused, and
+   transitions/hover must not be driven off inline-style substring matching.
+   .btn-secondary-glow (1 use) is now a compat alias of .btn-secondary in the
+   BUTTON PRIMITIVES block. Landing buttons that need to clip a decorative
+   overlay set their own `overflow` (see .gold-dust-cta). */
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--r-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Used by .motion-safe:animate-slide-in-up (HowItWorksSection, mobileAnimations).
+   Reduced-motion is neutralized in the reduce block below. */
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* slide-in-right and slide-in-up removed - use Tailwind animate-* utilities */
+
+/* Ensure tooltips have proper contrast */
+[role="tooltip"] {
+  --tooltip-bg: rgba(12, 12, 17, 0.95);
+  --tooltip-text: #F4F1E5;
+  --tooltip-border: rgba(255, 255, 255, 0.08);
+}
+
+[role="tooltip"] {
+  background-color: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  border: 1px solid var(--tooltip-border);
+}
+
+/* Floating orb animation for landing page backgrounds */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(20px); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-delayed { animation: float-delayed 5s ease-in-out infinite; animation-delay: 1s; }
+
+/* Subtle pulse for savings callout - gentle attention without being distracting */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 12px 2px rgba(16, 185, 129, 0.15);
+  }
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Transition Utilities - kept only used ones */
+
+/* Motion-safe variant - only animate when motion is OK. Consumer:
+   HowItWorksSection (components/Landing) applies the plain class
+   `animate-slide-in-up` (not a real Tailwind `motion-safe:` variant, since
+   this rule predates that convention) — was previously named with the
+   escaped-colon prefix `.motion-safe\:animate-slide-in-up`, which no JSX
+   referenced, silently no-opping the stagger-in animation on that section.
+   Renamed to match the real consumer. The other four motion-safe:* rules
+   that lived here (animate-fade-in, animate-scale-in, hover-lift,
+   transition-transform) had zero consumers anywhere and were removed.
+   `backwards` fill-mode: HowItWorksSection staggers this via an inline
+   animation-delay (0/150/300ms) — without holding the "from" state through
+   that delay, each item would flash at its normal opacity before the
+   animation reset it to 0 and faded it back in. */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-slide-in-up {
+    animation: slide-in-up 0.3s ease-out backwards;
+  }
+}
+
+/* Prevent Safari flicker on hover scale transforms */
+[class*="hover:scale-"],
+[class*="group-hover:scale-"] {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading spinners keep spinning even under reduced motion — a frozen spinner
+   reads as "stuck" and removes the only loading feedback. A small, slow
+   rotation is essential activity indication, not vestibular motion; the calmer
+   duration is set centrally in the reduced-motion block below. */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Branded loading spinner */
+.loading-spinner-svg {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes type-in {
+  0% {
+    opacity: 0;
+    color: var(--accent-success);
+    background-color: hsla(145, 70%, 50%, 0.2);
+  }
+  50% {
+    opacity: 1;
+    color: var(--accent-success);
+    background-color: hsla(145, 70%, 50%, 0.15);
+  }
+  100% {
+    opacity: 1;
+    color: inherit;
+    background-color: transparent;
+  }
+}
+
+.animate-type-in {
+  animation: type-in 0.6s ease-out forwards;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  /* Mobile button sizing - minimum touch target 44x44px */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Improve touch targets for buttons and interactive elements */
+  button,
+  [role="button"],
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exception for inline text buttons */
+  .inline-btn {
+    min-height: auto;
+    min-width: auto;
+  }
+
+  /* Compact modals for small screens */
+  [role="dialog"] {
+    max-height: 90vh;
+    margin: 5vh 2vw;
+    width: 96vw;
+    max-width: 96vw;
+  }
+
+  /* Full-width inputs on mobile */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  textarea {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Hide share button on very small screens */
+  button[title="Copy shareable link"] {
+    display: none;
+  }
+
+  /* Collapse sessions button text */
+  button[title="Save/Load Sessions"] span:not(:first-child) {
+    display: none;
+  }
+}
+
+/* Skip to content link for accessibility */
+@utility skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel-bg);
+  color: var(--editor-text);
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  z-index: var(--z-skip-link);
+  transition: top 0.2s;
+  &:focus {
+    top: 8px;
+  }
+}
+
+/* Eyebrow labels */
+@utility eyebrow {
+  font-family: var(--font-ui-wide);
+  font-weight: var(--font-ui-wide-weight);
+  letter-spacing: var(--font-ui-wide-tracking);
+  text-transform: uppercase;
+}
+
+/* Monospace with ligatures disabled */
+@utility mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "liga" 0, "calt" 0, "dlig" 0;
+  font-variant-ligatures: none;
+}
+
+/* Visually hidden but accessible to screen readers */
+@utility sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ========================================
+   Enhanced Responsive Utilities
+   ======================================== */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  /* Fixed elements need safe area padding */
+  .fixed.bottom-0 {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .fixed.bottom-4 {
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Improved modal responsiveness */
+@media (max-width: 640px) {
+  [role="dialog"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    max-height: 90vh !important;
+    /* Named dialog-sheet-up (not slide-up): premium.css also defines
+       @keyframes slide-up (a plain 12px hop) and loads after this file, so a
+       shared name here silently lost to it — this sheet was never actually
+       playing its intended full slide-from-offscreen entrance. */
+    animation: dialog-sheet-up 0.3s ease-out !important;
+  }
+
+  @keyframes dialog-sheet-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Touch-friendly scrolling */
+@utility touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Improved focus states for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button,
+  [role="button"],
+  a:not(.inline-btn),
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Remove hover effects on touch devices */
+  button:hover,
+  [role="button"]:hover {
+    transform: none;
+  }
+
+  /* Active state for touch feedback */
+  button:active,
+  [role="button"]:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+
+  /* Hide hover tooltips on touch */
+  [title]:hover::after {
+    display: none;
+  }
+}
+
+/* ========================================
+   Accessibility: Reduced Motion Support
+   Comprehensive support for users who prefer reduced motion.
+   Disables animations while preserving opacity/color transitions.
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all CSS animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+  }
+
+  /* Reduce transition durations to near-instant */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  /* Exception: Allow opacity and color transitions (non-motion) */
+  * {
+    transition-property: opacity, color, background-color, border-color, fill, stroke !important;
+    transition-duration: 150ms !important;
+  }
+
+  /* Exception: loaders must keep indicating activity (the global rule above
+     would otherwise freeze them after one 0.01ms iteration). A small, slow
+     rotation is essential feedback, not the large/parallax motion this query
+     targets. Overrides the `*` !important with a calmer spin. */
+  .animate-spin,
+  .loading-spinner-svg {
+    animation-name: spin !important;
+    animation-duration: 1.4s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+    animation-delay: 0ms !important;
+  }
+
+  /* Disable scroll-behavior smooth */
+  html,
+  body {
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable transform-based animations but preserve final state */
+  .btn-secondary-glow:hover {
+    transform: none !important;
+  }
+
+  /* Disable segment hero pulse */
+  .segment-hero-bg::after {
+    animation: none !important;
+  }
+
+  /* Disable dialog animations */
+  .dialog-component[open],
+  .dialog-component[open]::backdrop,
+  .confirm-dialog[open],
+  .confirm-dialog[open]::backdrop,
+  [role="dialog"] {
+    animation: none !important;
+  }
+
+  /* Neutralize the mobile slide-up keyframe under reduced motion (a same-named
+     @keyframes inside this media block overrides the global one when it matches). */
+  @keyframes slide-up {
+    from, to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Keep elements visible - no motion */
+  .animate-slide-in-up {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* High contrast mode support ('high' is not a valid value; the standard is 'more') */
+@media (prefers-contrast: more) {
+  :root {
+    --border-color: #ffffff;
+    --text-muted: #cccccc;
+  }
+
+  [data-theme="light"] {
+    --border-color: #000000;
+    --text-muted: #444444;
+  }
+}
+
+/* Mobile Animation Variables - simplified */
+:root {
+  /* --ease-spring intentionally NOT redefined here: the canonical value lives
+     in premium.css (cubic-bezier(0.34,1.56,0.64,1)), which loads last and won
+     anyway — this override was dead. See docs/design-tokens.md. */
+  --spring-duration: 300ms;
+}
+
+/* Score Counting Animations - simplified */
+
+@keyframes score-count-up {
+  0% {
+    transform: translateY(20px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-5px) scale(1.1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-score-count-up {
+  animation: score-count-up 500ms var(--ease-spring) forwards;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+  }
+}
+

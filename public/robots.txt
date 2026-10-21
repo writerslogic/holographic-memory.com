@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://holographic-memory.com/sitemap.xml

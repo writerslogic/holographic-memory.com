@@ -1,0 +1,443 @@
+/* print.css — extracted from index.css (order-preserving; Tailwind v4
+   inlines these @imports in order, so the compiled output is unchanged).
+   See src/index.css for the module map. */
+
+/* ═══════════════════════════════════════════════════════════
+   PRINT STYLESHEET — Letterhead-grade document output
+   ═══════════════════════════════════════════════════════════
+   Matches the forensic report typography and layout from
+   the macOS WritersProof application. Every printed page
+   carries the WritersLogic letterhead: page headers, footer
+   with corporate identifiers, and the forensic report's
+   serif/sans type system.
+
+   Palette reference (from brand/letterhead):
+     Navy:    #1a2744  (headings, rules)
+     Text:    #1a1a1a  (body)
+     Muted:   #626262  (captions, labels)
+     Rule:    #c5cad6  (light borders)
+     Accent:  #1a4d2e  (positive/human — green)
+     Caution: #8b6914  (warnings — gold)
+     Alert:   #8b1a1a  (errors — red)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Page size + margins only. @page margin-box at-rules (@top-left / @bottom-left
+   / page-counter, etc.) are NOT supported by Chromium or Safari browser print,
+   so they were removed to avoid pretending a running header/footer exists — and
+   because their footer content duplicated the single body::after footer below.
+   The browser's own header/footer (date, URL, page numbers) fills that role;
+   the body::after line carries the legal footer once at the end. */
+@page {
+  size: letter;
+  margin: 0.9in 0.75in 0.8in;
+}
+
+@media print {
+
+  /* ── 1. GLOBAL RESET ─────────────────────────────────── */
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  html, body {
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    /* Self-hosted brand body serif; Georgia is the graceful fallback if the
+       print engine does not load the WOFF2. */
+    font-family: "Source Serif 4", Georgia, "Times New Roman", "Noto Serif", serif !important;
+    font-size: 10.5pt !important;
+    line-height: 1.72 !important;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  #root {
+    overflow: visible !important;
+    max-width: none !important;
+  }
+
+  /* ── 2. HIDE NON-PRINT CHROME ────────────────────────── */
+
+  nav,
+  header[role="banner"],
+  footer,
+  .cookie-consent,
+  [role="dialog"],
+  [aria-modal="true"],
+  [aria-label="Cookie consent"],
+  .toast-container,
+  .back-to-top,
+  .skip-link,
+  .loading-spinner-svg,
+  .animate-spin,
+  .ambient-bg,
+  [role="tooltip"],
+  /* Partner/standards LOGO strips (inline SVG marks built for dark backgrounds —
+     they render as oversized faint gray shapes on white). Non-essential social
+     proof for a printed document. These use aria-label; content sections use
+     aria-labelledby, so real "Standards" copy is unaffected. */
+  [aria-label="Compliance standards"],
+  [aria-label="Protocol standards"],
+  [aria-label="Standards and registrations"],
+  canvas,
+  button:not([type="submit"]),
+  /* Decorative-only layers: glow blobs, texture/grain overlays, and any
+     absolute background sitting behind content (negative z). These carry no
+     information and only waste ink / disrupt flow on paper. */
+  .overlay,
+  .grain-overlay,
+  .grid-overlay,
+  .blur-xl,
+  .blur-2xl,
+  .blur-3xl,
+  [class*="blur-["],
+  [class*="-z-10"] {
+    display: none !important;
+  }
+
+  /* paper-grain texture is a ::before pseudo on a content element — hide only
+     the texture, not the element it decorates. */
+  .paper-grain::before {
+    display: none !important;
+  }
+
+  /* ── 3. TYPOGRAPHY — Forensic report style ───────────── */
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+      "Helvetica Neue", Arial, sans-serif !important;
+    color: #1a2744 !important;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  h1 {
+    font-size: 18pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    border-bottom: 2px solid #1a2744 !important;
+    padding-bottom: 6px !important;
+    margin: 0 0 14px !important;
+  }
+
+  h2 {
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-top: 1px solid #1a2744 !important;
+    border-bottom: 1px solid #c5cad6 !important;
+    padding: 6px 0 4px !important;
+    margin: 18px 0 10px !important;
+  }
+
+  h3 {
+    font-size: 10.5pt !important;
+    font-weight: 600 !important;
+    margin: 12px 0 6px !important;
+  }
+
+  h4 {
+    font-size: 9.5pt !important;
+    font-weight: 600 !important;
+    margin: 10px 0 4px !important;
+  }
+
+  p {
+    color: #1a1a1a !important;
+    margin-bottom: 8px !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  li {
+    color: #1a1a1a !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Monospace: code, hashes, technical values */
+  code, pre,
+  [class*="font-mono"],
+  .cm-editor,
+  .cm-editor .cm-content {
+    font-family: "SF Mono", "Fira Code", Consolas, monospace !important;
+    font-size: 8.5pt !important;
+    color: #3d3d3d !important;
+    background: #fafaf8 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* ── 4. CONTAINERS & LAYOUT ──────────────────────────── */
+
+  body, main, section, div, #root {
+    background: #fff !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  section, main, [class*="max-w-"], [class*="container"] {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ── 5. CARDS & PANELS — Bordered sections ───────────── */
+
+  [class*="rounded-"],
+  [class*="surface-"],
+  .surface {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid #c8c8c5 !important;
+    border-radius: 0 !important;
+    padding: 12px 16px !important;
+    margin-bottom: 12px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* ── 6. COLORS — Print-safe mapping ──────────────────── */
+
+  /* Override dark-theme variables */
+  :root,
+  [data-theme="dark"],
+  [data-theme="light"] {
+    --editor-bg: white !important;
+    --editor-text: black !important;
+    --panel-bg: white !important;
+    --border-color: #c8c8c5 !important;
+    --text-secondary: #3d3d3d !important;
+    --text-muted: #626262 !important;
+    color-scheme: light !important;
+  }
+
+  /* All text defaults to black */
+  * { color: #1a1a1a !important; }
+
+  /* Semantic colors — preserve meaning with print-safe values */
+  [class*="text-green"], [class*="text-emerald"] {
+    color: #1a4d2e !important;
+    font-weight: 700 !important;
+  }
+
+  [class*="text-red"], [class*="text-rose"] {
+    color: #8b1a1a !important;
+    font-weight: 700 !important;
+  }
+
+  [class*="text-yellow"], [class*="text-amber"], [class*="text-orange"] {
+    color: #8b6914 !important;
+    font-weight: 700 !important;
+  }
+
+  [class*="text-teal"], [class*="text-cyan"] {
+    color: #0d6e60 !important;
+    font-weight: 600 !important;
+  }
+
+  [class*="text-blue"], [class*="text-indigo"] {
+    color: #1a2744 !important;
+  }
+
+  /* Muted/secondary text */
+  [class*="text-white/"], [class*="text-gray"], [class*="text-slate"],
+  [class*="text-zinc"], [class*="text-neutral"], [class*="opacity-"] {
+    color: #626262 !important;
+    opacity: 1 !important;
+  }
+
+  /* Status badges — outlined for print */
+  [class*="bg-green"] {
+    background: #eaf5ee !important;
+    color: #1a4d2e !important;
+    border: 1px solid #1a4d2e !important;
+  }
+  [class*="bg-red"] {
+    background: #fdf0f0 !important;
+    color: #8b1a1a !important;
+    border: 1px solid #8b1a1a !important;
+  }
+  [class*="bg-yellow"], [class*="bg-amber"] {
+    background: #fef9e7 !important;
+    color: #8b6914 !important;
+    border: 1px solid #8b6914 !important;
+  }
+
+  /* Dark backgrounds → white */
+  [class*="bg-surface"], [class*="bg-gray"], [class*="bg-slate"],
+  [class*="bg-zinc"], [class*="bg-neutral"],
+  [style*="gradient"] {
+    background: #fff !important;
+  }
+
+  /* ── 7. TABLES ───────────────────────────────────────── */
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 9.5pt !important;
+    margin: 8px 0 !important;
+  }
+
+  /* Repeat the header row on every page a long table spans (supported in
+     Chromium + Safari print). tfoot likewise repeats if present. */
+  thead {
+    display: table-header-group;
+  }
+  tfoot {
+    display: table-footer-group;
+  }
+
+  th {
+    background: #fff !important;
+    color: #1a2744 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-top: 2px solid #1a2744 !important;
+    border-bottom: 2px solid #1a2744 !important;
+    padding: 6px 10px !important;
+    text-align: left !important;
+  }
+
+  td {
+    padding: 5px 10px !important;
+    border-bottom: 1px solid #e4e4e0 !important;
+    color: #1a1a1a !important;
+    background: #fff !important;
+  }
+
+  /* ── 8. BORDERS ──────────────────────────────────────── */
+
+  .border, [class*="border-"] {
+    border-color: #c8c8c5 !important;
+  }
+
+  /* ── 9. IMAGES ───────────────────────────────────────── */
+
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Partner / standards / tool logos (public/images/logos/*) are marks built for
+     the dark site — on white paper they print as oversized, near-invisible gray
+     blobs (dif.png alone renders ~780px wide once print removes the container's
+     width cap). They are affiliation branding, not document content, so drop them;
+     the surrounding heading text still conveys the affiliation. */
+  img[src*="/images/logos/"] {
+    display: none !important;
+  }
+
+  /* ── 10. LINKS — Expand URLs ─────────────────────────── */
+
+  a {
+    color: #1a2744 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Links styled as filled buttons/CTAs (a.btn*, .gold-dust-cta, role=button)
+     are useless as pills on paper — strip the button treatment so they read as
+     plain inline links (and get their URL expanded below, if external). */
+  a.btn,
+  a.gold-dust-cta,
+  a[class*="btn-"],
+  a[role="button"] {
+    display: inline !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    color: #1a2744 !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Expand external URLs so a printed page is self-contained. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 7.5pt;
+    color: #626262 !important;
+    font-family: "SF Mono", Consolas, monospace;
+    word-break: break-all;
+    font-style: normal;
+  }
+
+  /* But NOT where the URL is noise or redundant: in-page anchors, js, mail,
+     button-styled links/CTAs, nav/header/footer chrome (mostly hidden anyway),
+     or any link that opts out with data-print-url="none" (use it when the link
+     text already IS the URL). */
+  a[href^="#"]::after,
+  a[href^="javascript"]::after,
+  a[href^="mailto"]::after,
+  a[href^="tel"]::after,
+  nav a::after,
+  header a::after,
+  footer a::after,
+  a[data-print-url="none"]::after {
+    content: none;
+  }
+
+  /* ── 11. PAGE BREAKS ─────────────────────────────────── */
+
+  h1, h2, h3, h4 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Keep small, atomic blocks together — but NOT section/article: forcing a
+     long section to avoid breaking pushes it whole to the next page and leaves a
+     giant blank page. Let large sections and tables break naturally. */
+  img, figure, blockquote {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* ── 12. CODEMIRROR ──────────────────────────────────── */
+
+  .cm-editor .cm-gutters,
+  .cm-editor .cm-cursor,
+  .cm-editor .cm-selectionBackground,
+  .cm-editor .cm-activeLine,
+  .cm-editor .cm-activeLineGutter {
+    display: none !important;
+  }
+
+  /* ── 13. PRINT FOOTER ────────────────────────────────── */
+
+  body::after {
+    content: "WritersLogic Inc. · 955 11th Ave, Suite 3101 · San Diego, CA 92101 · writerslogic.com";
+    display: block;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 7pt;
+    color: #aaa;
+    letter-spacing: 0.06em;
+    margin-top: 24px;
+    padding-top: 10px;
+    border-top: 1px solid #c8c8c5;
+  }
+}

@@ -1,0 +1,20 @@
+/* ═══════════════════════════════════════════════════════════
+   WRITERSLOGIC DESIGN TOKEN SYSTEM
+   Fraunces · Source Serif 4 · DM Sans · JetBrains Mono
+   ═══════════════════════════════════════════════════════════ */
+
+/* Tailwind is imported first: CSS @import must precede other style rules,
+   and this directive is what pulls in the framework layers. */
+@import "tailwindcss";
+
+/* ── MODULES (import order is significant — see each file) ──
+   Tailwind must be imported first; @utility/@theme are processed across these
+   imported files as if inlined here. Split is order-preserving so the compiled
+   CSS is byte-identical to the former monolith (verified via scripts). */
+@import "./styles/parts/fonts.css";
+@import "./styles/parts/tokens.css";
+@import "./styles/parts/base.css";
+@import "./styles/parts/components.css";
+@import "./styles/parts/print.css";
+@import "./styles/parts/effects.css";
+@import "./styles/parts/responsive.css";

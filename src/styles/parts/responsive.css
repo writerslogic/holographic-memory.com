@@ -1,0 +1,354 @@
+/* ═══════════════════════════════════════════════════════════
+   responsive.css — WritersLogic Full Viewport System
+   Width: 320px → 2560px | Height: 400px → 1200px
+   Tailwind v4 — @custom-variant + @utility
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. CUSTOM VARIANTS ──
+   Height breakpoints + combined states. Use as h-short:, landscape-short: etc */
+
+/* Height */
+@custom-variant h-xs { @media (max-height: 500px) { @slot; } }
+@custom-variant h-short { @media (max-height: 700px) { @slot; } }
+@custom-variant h-tall { @media (min-height: 900px) { @slot; } }
+@custom-variant h-xl { @media (min-height: 1100px) { @slot; } }
+
+/* Orientation + height combined - landscape phones, short laptops */
+@custom-variant landscape-short {
+  @media (orientation: landscape) and (max-height: 500px) { @slot; }
+}
+@custom-variant landscape {
+  @media (orientation: landscape) { @slot; }
+}
+@custom-variant portrait {
+  @media (orientation: portrait) { @slot; }
+}
+
+/* Pointer - for hit areas */
+@custom-variant touch { @media (pointer: coarse) { @slot; } }
+@custom-variant fine { @media (pointer: fine) { @slot; } }
+
+/* Width beyond Tailwind defaults */
+@custom-variant xs { @media (min-width: 380px) { @slot; } }
+@custom-variant 3xl { @media (min-width: 1600px) { @slot; } }
+
+/* ── 2. VIEWPORT SHELL - REPLACES ALL 100vh INLINE STYLES ── */
+@utility page-shell {
+  min-height: 100dvh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  /* Prevents iOS rubber-band + safe area */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@utility main-content {
+  flex: 1 1 0%;
+  min-height: 0;
+  min-width: 0;
+  /* Isolates layout recalc */
+  contain: layout;
+}
+
+@utility header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky, 200);
+  /* Compress on short screens */
+  @variant h-short {
+    padding-block: 0.5rem;
+  }
+}
+
+/* Fix legacy classes from built file */
+.landing-layout,
+.min-h-screen {
+  min-height: 100dvh !important;
+  min-height: 100svh !important;
+}
+
+/* ── 3. OVERLAYS - REPLACES max-h- / calc(100vh-2rem) INLINE ── */
+@utility surface-modal {
+  max-height: calc(100dvh - 2rem);
+  max-height: calc(100svh - 2rem);
+  max-height: calc(100dvh - env(safe-area-inset-bottom) - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  @variant h-short {
+    max-height: calc(100dvh - 1rem);
+  }
+}
+
+/* Full-viewport dialog shell — replaces the identical inline <style> block
+   duplicated across ComplianceReportModal/ProofPacketModal/TechDocsModal/
+   DocumentationModal (Dialog.tsx consumers). Only the per-modal max-width
+   stays as a local override; everything else here was byte-identical. */
+@utility surface-modal-full {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: auto;
+  width: calc(100dvw - 32px);
+  height: calc(100dvh - 32px);
+  max-height: none;
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+  }
+  & .dialog-content {
+    background: linear-gradient(180deg, #1a1a24 0%, #12121a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@utility surface-drawer {
+  max-height: 90dvh;
+  max-height: 90svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@utility surface-sheet {
+  max-height: min(85dvh, 800px);
+  overflow-y: auto;
+}
+
+/* ── 4. CONTAINER SYSTEM - COMPONENT-LEVEL RESPONSIVENESS ── */
+@utility container-inline {
+  container-type: inline-size;
+}
+
+@utility container-size {
+  container-type: size;
+}
+
+@utility container-block {
+  container-type: block-size;
+}
+
+/* Performance: skip offscreen rendering */
+@utility content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 400px;
+  contain: layout style paint;
+}
+
+@utility content-auto-tall {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 800px;
+}
+
+/* ── 5. FLUID SYSTEMS - REPLACES clamp() INLINE STYLES ──
+   cqw/cqh (container query units) resolve to 0 with no container-type ancestor
+   in scope, which silently collapses every clamp() below to its floor value —
+   no error, no warning, just dead-looking "fluid" sizing. Pair any of these
+   utilities with container-inline or container-size on an ancestor element
+   (section 4, above) before using them. */
+@utility fluid-pad {
+  padding: clamp(1rem, 2cqw + 1cqh, 2.5rem);
+}
+
+@utility fluid-pad-sm {
+  padding: clamp(0.75rem, 1.5cqw + 0.75cqh, 1.5rem);
+}
+
+@utility fluid-gap {
+  gap: clamp(0.75rem, 1.5cqw + 1cqh, 2rem);
+}
+
+@utility fluid-gap-sm {
+  gap: clamp(0.5rem, 1cqw + 0.5cqh, 1rem);
+}
+
+@utility text-fluid-hero {
+  font-size: clamp(2rem, 5cqw + 2cqh, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  @variant h-short {
+    font-size: clamp(1.75rem, 4cqw + 1cqh, 3rem);
+  }
+}
+
+@utility text-fluid-h2 {
+  font-size: clamp(1.5rem, 3cqw + 1cqh, 2.5rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+@utility text-fluid-body {
+  font-size: clamp(1rem, 0.5cqw + 0.8cqh + 0.5rem, 1.125rem);
+  line-height: 1.6;
+}
+
+@utility media-fluid {
+  width: 100%;
+  height: auto;
+  max-height: 60dvh;
+  object-fit: cover;
+  @variant h-short {
+    max-height: 40dvh;
+  }
+}
+
+/* ── 6. HEIGHT COMPRESSION SYSTEM ──
+   Use on any section that feels too tall on 1280x700 laptops */
+@utility compress-h {
+  @variant h-short {
+    padding-block: 0.75rem;
+    gap: 0.5rem;
+    font-size: 0.97em;
+  }
+}
+
+@utility compress-hero {
+  min-height: 60dvh;
+  padding-block: clamp(3rem, 8cqh, 6rem); /* cqh — needs a container-* ancestor, see section 5 */
+  /* landscape-short (max-height:500px) is a subset of h-short (max-height:700px) —
+     every landscape-short viewport already matches h-short, so no separate
+     override is needed here. (A prior landscape-short:min-height:100dvh override
+     was inverted: it undid the h-short compression at the most cramped
+     viewports instead of matching or exceeding it.) */
+  @variant h-short {
+    min-height: 40dvh;
+    padding-block: 1.5rem;
+  }
+}
+
+@utility compress-section {
+  padding-block: clamp(3rem, 6cqh, 5rem); /* cqh — needs a container-* ancestor, see section 5 */
+  @variant h-short {
+    padding-block: clamp(1.5rem, 4cqh, 2.5rem);
+  }
+}
+
+@utility stack-responsive {
+  display: flex;
+  flex-direction: column;
+  @variant h-short {
+    gap: 0.5rem;
+  }
+  @variant landscape-short {
+    flex-direction: row;
+  }
+}
+
+@utility hide-h-short {
+  @variant h-short {
+    display: none;
+  }
+}
+
+@utility show-h-short {
+  display: none;
+  @variant h-short {
+    display: block;
+  }
+}
+
+/* ── 7. WIDTH+HEIGHT GRIDS ── */
+@utility responsive-grid {
+  display: grid;
+  gap: var(--space-md, 1rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+@utility responsive-grid-dense {
+  display: grid;
+  gap: clamp(0.75rem, 1cqw + 0.75cqh, 1.5rem); /* cqw/cqh — needs a container-* ancestor, see section 5 */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  /* Adapt rows to viewport height */
+  @variant h-short {
+    gap: 0.75rem;
+  }
+}
+
+@utility grid-height-aware {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 0;
+  /* Child that should scroll, not overflow page */
+  & > .scroll-area {
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* ── 8. SCROLL AND SAFE AREA ── */
+@utility scroll-area {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+@utility scroll-area-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@utility safe-pad {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@utility safe-pad-inline {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* ── 9. WIDE-VIEWPORT EXPANSION ──
+   Below ~1330px the stock container tiers are the right size. Above it they
+   leave large dead gutters, so every tier tracks the viewport instead.
+
+   This was a single fixed step and that was the bug: the tiers jumped once at
+   1330px and then never grew again, so a 2560px display still rendered its
+   widest content at 1600px with ~480px dead on each side, and prose at 768px
+   with ~896px. Each tier is now clamp(floor, vw, ceiling):
+
+     floor    the old fixed step, so nothing at or below ~1920px regresses
+     vw       the growth term, coefficients chosen to hold the ordering
+              2xl < 3xl < 4xl < 5xl < 6xl < 7xl at every viewport width
+     ceiling  where growth stops, so an ultrawide does not stretch a line of
+              body text past a readable measure
+
+   The prose tiers grow too, but far more slowly than the layout tiers: at
+   2560px 2xl reaches 960px rather than 672px. Leaving them fixed while the
+   layout tiers grew was what made the gutters look uneven in the first place.
+   --text-xs rises to the --text-sm value at the same point, so the smallest UI
+   type is no longer 12px on a large display. */
+@media (min-width: 1330px) {
+  :root {
+    /* The vw coefficients are set so each tier starts growing AT the 1330px
+       breakpoint rather than some distance above it. The first attempt used
+       gentler coefficients, which left the floors binding until ~1700px and so
+       changed nothing on a laptop — the tiers below are what a 1440–1728px
+       display actually sees. The widest tiers keep the largest floors because
+       at 1330px they already exceed the viewport. */
+    /* prose: reading measure, so these grow the least and stop the soonest */
+    --container-2xl: clamp(42rem, 50vw, 68rem);
+    --container-3xl: clamp(48rem, 57vw, 76rem);
+    /* layout */
+    --container-4xl: clamp(72rem, 80vw, 110rem);
+    --container-5xl: clamp(84rem, 88vw, 120rem);
+    --container-6xl: clamp(92rem, 92vw, 128rem);
+    --container-7xl: clamp(100rem, 95vw, 136rem);
+
+    --text-xs: 0.875rem;
+  }
+
+  .content-center {
+    max-width: clamp(75rem, 70vw, 120rem);
+  }
+}
