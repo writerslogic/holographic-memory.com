@@ -12,8 +12,8 @@ const MODULES = [
     body: "Bind, bundle, permute; fact memory, Hopfield cleanup",
   },
   {
-    title: "Optional ANN indexes",
-    body: "NSG graph, IVF, sparse inverted index",
+    title: "Vector indexes",
+    body: "Vertex graph index, IVF, sparse inverted index",
   },
   {
     title: "Provenance (optional)",
@@ -52,7 +52,7 @@ export function HmsArchitecture() {
         Applications in Rust, Node.js, Python, Go, Java or .NET, or any HTTP
         client through hms-server, call the HmsCore engine inside their own
         process. The engine contains document search, a vector-symbolic fact
-        layer, optional approximate-nearest-neighbour indexes and optional
+        layer, vector indexes and optional
         provenance signing. Everything persists to an append-only log on local
         disk with CRC32 checks, LZ4 compression, memory mapping and optional
         AES-256-GCM encryption.

@@ -415,9 +415,9 @@ export function ProductPage() {
           </h2>
           <p className="text-slate-300 text-center max-w-2xl mx-auto mb-10">
             Every number below comes from a results file committed to the
-            repository, including the one where {HMS_NAME} loses. They are
-            single runs on the stated hardware, not a substitute for testing
-            your data.
+            repository. They are single runs on the stated hardware, not a
+            substitute for testing your data. Where {HMS_NAME} loses, it is
+            listed under known limits.
           </p>
           <div
             className="overflow-x-auto rounded-2xl border border-white/10"
@@ -486,7 +486,7 @@ export function ProductPage() {
             </div>
           </div>
 
-          <details className="mt-8 surface surface-panel rounded-2xl">
+          <details open className="mt-8 surface surface-panel rounded-2xl">
             <summary className="cursor-pointer font-semibold text-slate-100">
               Known limits
             </summary>

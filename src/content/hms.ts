@@ -53,7 +53,7 @@ export interface HmsBenchmark {
   reference: string;
   note: string;
   source: string; // path in the HMS repo, main branch
-  outcome: "ahead" | "behind";
+  outcome: "ahead" | "behind" | "hms-only";
 }
 
 export const HMS_BENCHMARKS: HmsBenchmark[] = [
@@ -83,12 +83,12 @@ export const HMS_BENCHMARKS: HmsBenchmark[] = [
     outcome: "ahead",
   },
   {
-    label: "Approximate vector search, glove-100-angular recall@10",
-    hms: "0.252 at 33.7 QPS (sparse vector path)",
-    reference: "FAISS HNSW 0.832 at 4,111 QPS; hnswlib 0.831 at 3,368 QPS",
-    note: "1.18M vectors, one thread, Apple M4. HMS loses here; use a dedicated HNSW index if pure vector ANN is your workload.",
-    source: "benchmarks/results/public_glove-100-angular.json",
-    outcome: "behind",
+    label: "Vector search, glove-100-angular recall@10 (vertex graph index)",
+    hms: "2,892 QPS at recall 0.959; 760 QPS at recall 0.993",
+    reference: "HMS-only tuning run; head-to-head comparison in progress",
+    note: "1.18M vectors, degree 64, build ef 500, one query thread, median of 5 repeats. Tuned on 2,000 train vectors held out of the index, not the ann-benchmarks test set. Modal x86_64 container, 8 vCPU, 32 GiB, AVX-512. No competitor has been measured on the same machine yet.",
+    source: "benchmarks/results/ann_modal_graph_v1.raw.json",
+    outcome: "hms-only",
   },
 ];
 
@@ -101,6 +101,7 @@ export const HMS_DURABILITY = {
 
 export const HMS_IN_PROGRESS = [
   "Durable replace and delete latency against SQLite FTS5, tantivy and Lucene",
+  "Vector search against hnswlib, FAISS and other indexes on the same machine",
   "Head-to-head runs against Mem0, Zep, Chroma and Qdrant on the same hardware",
   "Held-out LongMemEval answer accuracy",
 ] as const;
@@ -166,7 +167,7 @@ export const HMS_CAPABILITIES: HmsCapability[] = [
 ];
 
 export const HMS_LIMITS = [
-  "Not a fast approximate-nearest-neighbour index: dedicated HNSW libraries are far ahead on pure vector search.",
+  "The older sparse vector path (memorize_vector) is experimental and far behind HNSW libraries: recall@10 0.252 at 33.7 QPS on glove-100 against hnswlib 0.831 at 3,368 QPS (public_glove-100-angular.json). Use the vertex graph index for vector search.",
   "Hypervector sketches and term counts are not encryption; anyone holding a plaintext store can test candidate text against it. Use the encrypted store for confidentiality.",
   "Deleted bytes can survive in places no file API reaches: SSD wear levelling, snapshots, backups and swap. Pair purge with encryption or full-disk encryption.",
   "No MCP server ships yet, the npm package is deprecated (build the Node module from source) and Python is an HTTP client, not in-process search.",
@@ -358,7 +359,7 @@ export const HMS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How is this different from Mem0, Zep, Chroma or Qdrant?",
-    a: "Holographic Memory is a library you embed, not a service you call, and it puts encryption at rest, signed provenance and a text-erasing purge in the open-source engine itself. It is not the fastest vector index: on pure approximate-nearest-neighbour search, HNSW libraries beat it by a wide margin, and the benchmark table says so.",
+    a: "Holographic Memory is a library you embed, not a service you call, and it puts encryption at rest, signed provenance and a text-erasing purge in the open-source engine itself. Vector search runs on a vertex graph index; a same-machine comparison with HNSW libraries is in progress.",
   },
   {
     q: "Why is it called holographic?",
