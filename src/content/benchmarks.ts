@@ -119,6 +119,8 @@ export const TEXT_QUALITY: QualityRow[] = TEXT_SETS.map(([prefix, title]) => ({
 }));
 
 const vec95 = VECTOR_GROUPS[1];
+/** HMS throughput over hnswlib on SIFT-1M at recall 0.95, e.g. "2.29x". */
+export const SIFT_QPS_FACTOR_095 = vec95.factor;
 const vecFactors = VECTOR_GROUPS.map((g) => g.factor);
 const textFactors = TEXT_GROUPS.map((g) => g.factor);
 const range = (xs: string[]): string => {

@@ -6,6 +6,8 @@
 // committed source is worded as "in progress". writerslogic.com keeps a shorter copy
 // of the shared claims in src/content/hms.ts; keep the two in step.
 
+import { SIFT_QPS_FACTOR_095 } from "./benchmarks";
+
 export const HMS_NAME = "Holographic Memory";
 export const HMS_FULL_NAME = "WritersLogic Holographic Memory";
 export const HMS_CLOUD_NAME = "WritersLogic Holographic Memory Cloud";
@@ -57,7 +59,7 @@ export const HMS_DURABILITY = {
 // ── Known limits ────────────────────────────────────────────────────────────
 
 export const HMS_LIMITS = [
-  "The older sparse vector path (memorize_vector) is experimental and far behind HNSW libraries: recall@10 0.252 at 33.7 QPS on glove-100 against hnswlib 0.831 at 3,368 QPS (public_glove-100-angular.json). Use the vertex graph index for vector search.",
+  "The older sparse vector path (memorize_vector) is experimental and far behind HNSW libraries: on glove-100, Apple M4: recall@10 0.252 at 33.7 QPS against hnswlib 0.831 at 3,368 QPS (public_glove-100-angular.json). Use the vertex graph index for vector search.",
   "Hypervector sketches and term counts are not encryption; anyone holding a plaintext store can test candidate text against it. Use the encrypted store for confidentiality.",
   "Deleted bytes can survive in places no file API reaches: SSD wear levelling, snapshots, backups and swap. Pair purge with encryption or full-disk encryption.",
   "No MCP server ships yet, the npm package is deprecated (build the Node module from source) and Python is an HTTP client, not in-process search.",
@@ -150,7 +152,7 @@ export const HMS_LICENSE_NOTE =
 // log, and team key management, audit and SSO, run on Cloudflare.
 
 export const HMS_LOCAL_FIRST_NOTE =
-  "Your memory stays on your machines. Cloud keeps your machines in step: encrypted sync across your laptops, desktops and team, a backup you can restore anywhere, and independent verification of the provenance and deletion records your stores sign. We never hold your keys, never see your documents and never run your searches.";
+  `Your memory stays on your machines. Cloud keeps your machines in step: encrypted sync across your laptops, desktops and team, a backup you can restore anywhere, and independent verification of the provenance and deletion records your stores sign. We never hold your keys, never see your documents and never run your searches. ${HMS_CLOUD_NAME} runs its sync, backup and verification on Cloudflare.`;
 
 export interface HmsCompareRow {
   feature: string;
@@ -264,7 +266,7 @@ export const HMS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How is this different from Mem0, Zep, Chroma or Qdrant?",
-    a: "Holographic Memory is a library you embed, not a service you call, and it puts encryption at rest, signed provenance and a text-erasing purge in the open-source engine itself. Vector search runs on a vertex graph index; on SIFT-1M it served 2.29x the queries per second of hnswlib at recall 0.95 on the same machine (benchmarks section).",
+    a: `Holographic Memory is a library you embed, not a service you call, and it puts encryption at rest, signed provenance and a text-erasing purge in the open-source engine itself. Vector search runs on a vertex graph index; on SIFT-1M it served ${SIFT_QPS_FACTOR_095} the queries per second of hnswlib at recall 0.95 on the same machine (benchmarks section).`,
   },
   {
     q: "Why is it called holographic?",
