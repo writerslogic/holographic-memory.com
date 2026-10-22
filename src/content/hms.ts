@@ -24,6 +24,7 @@ export const HMS_TAGLINE =
   "Local, encrypted, provenance-aware memory for AI agents.";
 export const HMS_HERO_LINE =
   "Search and memory that run inside your app, on your machine. No service calls, no telemetry.";
+export const HMS_HERO_LINE_SHORT = "Runs inside your app, on your machine. No service calls.";
 
 export const HMS_REPO = "https://github.com/writerslogic/holographic-memory";
 export const HMS_LINKS = {

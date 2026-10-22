@@ -72,7 +72,7 @@ export function BenchChart({ group }: { group: BarGroup }) {
             ))}
           </tbody>
         </table>
-        <a href={group.source}>Raw results file</a>
+        <a href={group.source} className="bench-chart__source">Raw results file</a>
       </details>
     </figure>
   );

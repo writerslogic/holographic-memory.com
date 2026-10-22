@@ -19,6 +19,41 @@ const NODES: [number, number, number][] = [
   [470, 290, 3.5], [150, 210, 3.5], [440, 400, 3.5], [110, 360, 3.5],
 ];
 
+function MarkShapes() {
+  return (
+    <>
+      {EDGES.map(([x1, y1, x2, y2]) => (
+        <line key={`${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} />
+      ))}
+      {NODES.map(([cx, cy, r]) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} stroke="none" />
+      ))}
+    </>
+  );
+}
+
+// Decorative hero backdrop: the same mark, turned once about (256, 291) as in the
+// animated logo. The square viewBox is centered on that pivot and wide enough
+// that the outer dots never clip mid-turn.
+export function HmsMarkBackdrop({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="26 61 460 460"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth={3.5}
+      strokeLinecap="round"
+    >
+      <g className="hero-mark__spin">
+        <MarkShapes />
+      </g>
+    </svg>
+  );
+}
+
 export function HmsMark({
   className = "",
   title,
@@ -38,12 +73,7 @@ export function HmsMark({
       strokeWidth={5}
       strokeLinecap="round"
     >
-      {EDGES.map(([x1, y1, x2, y2]) => (
-        <line key={`${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} />
-      ))}
-      {NODES.map(([cx, cy, r]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} stroke="none" />
-      ))}
+      <MarkShapes />
     </svg>
   );
 }

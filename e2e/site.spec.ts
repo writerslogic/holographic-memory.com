@@ -31,6 +31,22 @@ test("ships server-rendered content and metadata", async ({ request }) => {
   expect(html).toContain('"@type":"SoftwareApplication"');
   expect(html).toContain("og-image.png");
   expect(html).toContain('id="benchmarks"');
+  expect(html).toContain('"@type":"FAQPage"');
+  expect(html).toContain('<link rel="manifest" href="/manifest.webmanifest"');
+  expect(html).toContain('<!--email_off--><div id="root">');
+});
+
+test("ships the static site files", async ({ request }) => {
+  for (const path of [
+    "/manifest.webmanifest",
+    "/llms.txt",
+    "/.well-known/security.txt",
+    "/apple-touch-icon.png",
+    "/favicon.ico",
+    "/sitemap.xml",
+  ]) {
+    expect((await request.get(path)).status(), path).toBe(200);
+  }
 });
 
 test("paid tiers fall back to the waitlist when checkout is off", async ({ page }) => {

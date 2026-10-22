@@ -1,4 +1,5 @@
-import { HmsMark } from "./components/HmsMark";
+import { HmsMarkBackdrop } from "./components/HmsMark";
+import { InstallCommands } from "./components/InstallCommands";
 import { BenchChart } from "./components/BenchChart";
 import { CodeTabs } from "./components/CodeTabs";
 import { CompareMatrix, MATRIX_LEGEND } from "./components/CompareMatrix";
@@ -19,6 +20,7 @@ import {
   HMS_LOCAL_FIRST_NOTE,
   HMS_NAME,
   HMS_HERO_LINE,
+  HMS_HERO_LINE_SHORT,
   HMS_OSS_VS_CLOUD,
   HMS_PLATFORM,
   HMS_TAGLINE,
@@ -249,30 +251,21 @@ export function ProductPage() {
       </div>
 
       {/* Hero */}
-      <section className="relative pt-20 pb-12 section-x" aria-labelledby="hms-heading">
-        <div className="max-w-4xl mx-auto text-center">
-          <HmsMark className="h-12 sm:h-14 mx-auto mb-5 text-slate-100" />
-          <p className="text-teal-400 text-xs font-semibold tracking-widest uppercase mb-4">
-            {HMS_FULL_NAME}
-          </p>
+      <section className="hero section-x" aria-labelledby="hms-heading">
+        <HmsMarkBackdrop className="hero-mark" />
+        <div className="hero__main max-w-4xl mx-auto text-center">
           <h1
             id="hms-heading"
-            className="font-serif text-4xl sm:text-5xl font-semibold leading-tight tracking-tight mb-5 text-balance text-slate-100"
+            className="hero__title font-serif font-semibold tracking-tight text-balance text-slate-100"
           >
             {HMS_TAGLINE}
           </h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
-            {HMS_HERO_LINE}
+          <p className="hero__line text-slate-300 max-w-2xl mx-auto">
+            <span className="hero__long">{HMS_HERO_LINE}</span>
+            <span className="hero__short">{HMS_HERO_LINE_SHORT}</span>
           </p>
-          <ul className="hero-install list-none p-0 m-0 mb-8" aria-label="Install">
-            {INSTALL.map((line) => (
-              <li key={line.cmd}>
-                <span className="hero-install__lang">{line.lang}</span>
-                <code className="hero-install__cmd">{line.cmd}</code>
-              </li>
-            ))}
-          </ul>
-          <div className="cta-stack mb-8">
+          <InstallCommands lines={INSTALL} />
+          <div className="cta-stack hero__cta">
             <a href="#quickstart" className="btn-primary select-none" data-umami-event="cta_hms_quickstart" data-umami-event-page="hms">
               Get started
             </a>
@@ -287,6 +280,8 @@ export function ProductPage() {
               View on GitHub
             </a>
           </div>
+        </div>
+        <div className="hero__proof max-w-4xl mx-auto text-center">
           <ul className="proof-chips list-none p-0 m-0" aria-label="Measured results">
             {PROOF_CHIPS.map((c) => (
               <li key={c.label}>

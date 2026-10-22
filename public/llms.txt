@@ -1,0 +1,27 @@
+# WritersLogic Holographic Memory (HMS)
+
+> Local, encrypted, provenance-aware memory for AI agents. HMS is an open-source Rust engine for search and memory that runs inside your app, on your machine. It makes no service calls and sends no telemetry.
+
+HMS is made by WritersLogic, Inc. (https://writerslogic.com).
+
+## What it is
+
+- Embeddable memory for AI agents: hybrid search (BM25 plus the embeddings you supply), vector-symbolic fact memory, optional encryption at rest and signed provenance, in one Rust library.
+- Runs in-process. Embeddings are supplied by you or computed by local models from weights you provide; it never downloads a model.
+- Python applications use holographic-sdk, an HTTP client for the hms-server binary.
+- WritersLogic Holographic Memory Cloud (in development) adds encrypted sync, backup and independent verification. Memory stays on your machines.
+
+## License
+
+The source on main is Apache-2.0. Packages published so far (crate 0.6.1, holographic-sdk 0.1.2 on PyPI) were released under AGPL-3.0-or-later and stay available under those terms.
+
+## Links
+
+- [Product site](https://holographic-memory.com/)
+- [Source code](https://github.com/writerslogic/holographic-memory)
+- [Documentation](https://writerslogic.github.io/holographic-memory/)
+- [Quickstart](https://writerslogic.github.io/holographic-memory/latest/quickstart/)
+- [Benchmark results](https://github.com/writerslogic/holographic-memory/tree/main/benchmarks/results)
+- [crates.io](https://crates.io/crates/holographic-memory)
+- [PyPI: holographic-sdk](https://pypi.org/project/holographic-sdk/)
+- [Privacy model](https://github.com/writerslogic/holographic-memory/blob/main/docs/PRIVACY.md)

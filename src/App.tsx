@@ -7,6 +7,7 @@ import {
   HMS_LICENSE_NOTE,
   HMS_LINKS,
   HMS_NAME,
+  HMS_SHORT,
 } from "./content/hms";
 
 const NAV = [
@@ -25,7 +26,8 @@ function Header() {
       >
         <a href="#top" className="flex items-center gap-3 text-slate-100 font-semibold">
           <HmsMark className="h-7 w-auto" />
-          <span>{HMS_NAME}</span>
+          <span className="hidden sm:inline">{HMS_NAME}</span>
+          <span className="sm:hidden">{HMS_SHORT}</span>
         </a>
         <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 list-none p-0 m-0 text-sm text-slate-300">
           {NAV.map((n) => (

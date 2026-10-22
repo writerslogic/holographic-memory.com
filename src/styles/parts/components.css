@@ -992,17 +992,92 @@ main.relative::before {
 .bench-chart__data a { color: var(--color-text-primary); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── Hero install lines and proof chips ─────────────────────────────────── */
-.hero-install { display: grid; gap: 0.5rem; max-width: 46rem; margin-inline: auto; text-align: left; }
-.hero-install li {
-  display: flex; align-items: center; gap: 0.75rem; min-width: 0;
+/* Height-aware hero: title through CTAs fit and center in the first viewport.
+   The header is ~3.9rem tall; svh keeps the fold stable under mobile toolbars. */
+.hero {
+  position: relative; overflow: clip;
+  display: flex; flex-direction: column;
+  min-height: calc(100vh - 3.9rem);
+  min-height: calc(100svh - 3.9rem);
+  padding-block: clamp(1rem, 4svh, 3.5rem);
+}
+.hero__main { position: relative; margin-block: auto; width: 100%; }
+.hero__proof { position: relative; width: 100%; padding-top: clamp(1rem, 3svh, 2rem); }
+.hero__title {
+  font-size: clamp(1.75rem, min(1rem + 3.2vw, 0.75rem + 5.2svh), 3.25rem);
+  line-height: 1.12; margin: 0 0 clamp(0.75rem, 2.2svh, 1.25rem);
+}
+.hero__line {
+  font-size: clamp(1rem, 0.94rem + 0.3vw, 1.125rem); line-height: 1.6;
+  margin: 0 auto clamp(1rem, 3.4svh, 2rem);
+}
+.hero__short { display: none; }
+.hero__cta { margin: clamp(1rem, 3.4svh, 2rem) 0 0; }
+@media (max-width: 639px), (max-height: 700px) {
+  .hero__long { display: none; }
+  .hero__short { display: inline; }
+}
+@media (max-height: 520px) {
+  .hero__line { display: none; }
+}
+
+/* Decorative mark behind the hero copy: off-center, faint, inert. */
+.hero-mark {
+  position: absolute; z-index: 0; pointer-events: none;
+  top: 50%; right: max(-12rem, -14vw);
+  width: clamp(22rem, 52vw, 46rem); height: auto;
+  translate: 0 -50%;
+  color: var(--color-chart-1); opacity: 0.13;
+}
+:root[data-theme="light"] .hero-mark { opacity: 0.1; }
+.hero-mark__spin {
+  transform-box: view-box; transform-origin: 256px 291px;
+  animation: hero-mark-turn 4.5s cubic-bezier(0.45, 0, 0.2, 1) 0.3s 1 both;
+}
+@keyframes hero-mark-turn { from { rotate: 0deg; } to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .hero-mark__spin { animation: none; } }
+@media (max-width: 639px) {
+  .hero-mark { top: 0; right: -40%; width: 26rem; translate: 0 -20%; opacity: 0.09; }
+}
+@media (max-height: 520px) { .hero-mark { display: none; } }
+
+/* Install lines: each is a copy button. */
+.hero-install { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; max-width: 50rem; margin-inline: auto; text-align: left; }
+.hero-install li { min-width: 0; }
+.hero-install__btn {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%; min-width: 0;
   padding: 0.5rem 0.75rem; border: 1px solid var(--color-border-subtle);
-  border-radius: 0.5rem; background: var(--color-bg-inset);
+  border-radius: 0.5rem; background: var(--color-bg-inset); color: inherit;
+  font: inherit; text-align: left; cursor: copy;
+  transition: border-color 150ms ease;
 }
-.hero-install__lang { flex: none; width: 3.75rem; font-size: 0.75rem; color: var(--color-text-secondary); }
+.hero-install__btn:hover, .hero-install__btn[data-copied] { border-color: var(--color-chart-1); }
+.hero-install__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.hero-install__lang { flex: none; width: 3.25rem; font-size: 0.75rem; color: var(--color-text-secondary); }
 .hero-install__cmd {
-  min-width: 0; overflow-wrap: anywhere; font-family: var(--font-mono);
-  font-size: 0.8125rem; color: var(--color-text-primary);
+  flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-text-primary);
+  user-select: text; -webkit-user-select: text;
 }
+.hero-install__icon {
+  flex: none; display: inline-flex; align-items: center; gap: 0.25rem;
+  font-size: 0.75rem; color: var(--color-text-secondary);
+}
+.hero-install__icon svg { width: 1rem; height: 1rem; }
+.hero-install__btn[data-copied] .hero-install__icon { color: var(--color-text-primary); }
+@media (max-width: 479px) {
+  .hero-install__btn { gap: 0.5rem; padding-inline: 0.625rem; }
+  .hero-install__lang { width: 2.75rem; }
+  .hero-install__cmd { font-size: 0.75rem; }
+}
+
+/* UI chrome stays out of a select-all; content text and code stay selectable. */
+button, summary, [role="tab"], .btn-primary, .btn-ghost, .skip-link,
+.page-nav, header nav, .hero-install__lang, .hero-install__icon,
+.bench-chart__source, svg[aria-hidden="true"] {
+  user-select: none; -webkit-user-select: none;
+}
+
 .proof-chips { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
 .proof-chip {
   display: flex; flex-direction: column; gap: 0.25rem; height: 100%; padding: 0.75rem 1rem;
