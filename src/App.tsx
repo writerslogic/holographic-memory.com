@@ -1,3 +1,4 @@
+import { ThemeToggle } from "./components/ThemeToggle";
 import { HmsMark } from "./components/HmsMark";
 import { ProductPage } from "./ProductPage";
 import {
@@ -38,6 +39,9 @@ function Header() {
               </a>
             </li>
           ))}
+          <li>
+            <ThemeToggle />
+          </li>
           <li>
             <a
               href={HMS_LINKS.github}

@@ -965,3 +965,104 @@ main.relative::before {
   }
 }
 
+
+/* ── Benchmark bar charts (src/components/BenchChart.tsx) ───────────────── */
+.bench-chart {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 0.75rem;
+  background: var(--color-bg-surface);
+}
+.bench-chart__caption { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; }
+.bench-chart__title { font-weight: 600; color: var(--color-text-primary); }
+.bench-chart__meta { font-size: 0.8125rem; color: var(--color-text-secondary); }
+.bench-chart__factor { font-size: 0.875rem; font-weight: 600; color: var(--color-teal-300); }
+.bench-chart__svg { display: block; width: 100%; height: auto; overflow: visible; }
+.bench-bar__label { font-size: 13px; fill: var(--color-text-secondary); }
+.bench-bar__value { font-size: 13px; font-variant-numeric: tabular-nums; fill: var(--color-text-primary); }
+.bench-bar__rect { fill: var(--color-slate-500); }
+.bench-bar--hms .bench-bar__rect { fill: var(--color-chart-1); }
+.bench-bar--hms .bench-bar__label { fill: var(--color-text-primary); font-weight: 600; }
+.bench-chart__data { margin-top: 0.75rem; font-size: 0.875rem; color: var(--color-text-secondary); }
+.bench-chart__data summary { cursor: pointer; color: var(--color-text-primary); }
+.bench-chart__data table { width: 100%; margin: 0.5rem 0; border-collapse: collapse; }
+.bench-chart__data th, .bench-chart__data td { padding: 0.25rem 0.5rem; text-align: left; border-bottom: 1px solid var(--color-border-subtle); }
+.bench-chart__data td { font-variant-numeric: tabular-nums; }
+.bench-chart__data a { color: var(--color-text-primary); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Hero install lines and proof chips ─────────────────────────────────── */
+.hero-install { display: grid; gap: 0.5rem; max-width: 46rem; margin-inline: auto; text-align: left; }
+.hero-install li {
+  display: flex; align-items: center; gap: 0.75rem; min-width: 0;
+  padding: 0.5rem 0.75rem; border: 1px solid var(--color-border-subtle);
+  border-radius: 0.5rem; background: var(--color-bg-inset);
+}
+.hero-install__lang { flex: none; width: 3.75rem; font-size: 0.75rem; color: var(--color-text-secondary); }
+.hero-install__cmd {
+  min-width: 0; overflow-wrap: anywhere; font-family: var(--font-mono);
+  font-size: 0.8125rem; color: var(--color-text-primary);
+}
+.proof-chips { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.proof-chip {
+  display: flex; flex-direction: column; gap: 0.25rem; height: 100%; padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border-subtle); border-radius: 0.75rem;
+  background: var(--color-bg-surface); text-decoration: none; text-align: left;
+}
+.proof-chip:hover { border-color: var(--color-chart-1); }
+.proof-chip:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.proof-chip__value { font-size: 1.375rem; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.proof-chip__label { font-size: 0.8125rem; line-height: 1.4; color: var(--color-text-secondary); }
+
+/* ── Sticky in-page nav ─────────────────────────────────────────────────── */
+.page-nav {
+  position: sticky; top: 0; z-index: 20;
+  border-block: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-canvas);
+}
+.page-nav ul {
+  display: flex; gap: 0.25rem; max-width: 64rem; margin: 0 auto; padding: 0 1rem;
+  list-style: none; overflow-x: auto; scrollbar-width: none;
+}
+.page-nav a {
+  display: block; padding: 0.75rem 0.625rem; white-space: nowrap; font-size: 0.875rem;
+  color: var(--color-text-secondary); text-decoration: none;
+}
+.page-nav a:hover { color: var(--color-text-primary); }
+.page-nav a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+
+/* ── How it works steps ─────────────────────────────────────────────────── */
+.steps { display: grid; gap: 1.25rem; counter-reset: none; }
+@media (min-width: 768px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+.steps__item { position: relative; }
+.steps__num {
+  display: inline-grid; place-items: center; width: 2rem; height: 2rem; margin-bottom: 0.75rem;
+  border-radius: 999px; border: 1px solid var(--color-chart-1); color: var(--color-text-primary);
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+@media (min-width: 768px) {
+  .steps__item:not(:last-child)::after {
+    content: "→"; position: absolute; right: -1rem; top: 50%; transform: translate(50%, -50%);
+    color: var(--color-text-secondary);
+  }
+}
+
+/* ── Code tabs ──────────────────────────────────────────────────────────── */
+.code-tabs__list { display: flex; gap: 0.25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border-subtle); }
+.code-tabs__tab {
+  padding: 0.5rem 1rem; border: 0; border-bottom: 2px solid transparent; background: none;
+  color: var(--color-text-secondary); font: inherit; cursor: pointer;
+}
+.code-tabs__tab[aria-selected="true"] { color: var(--color-text-primary); border-bottom-color: var(--color-chart-1); }
+.code-tabs__tab:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+/* ── Comparison matrix ──────────────────────────────────────────────────── */
+.matrix { overflow-x: auto; border: 1px solid var(--color-border-subtle); border-radius: 1rem; }
+.matrix__table { width: 100%; min-width: 34rem; border-collapse: collapse; font-size: 0.875rem; }
+.matrix__table th, .matrix__table td { padding: 0.75rem; border-top: 1px solid var(--color-border-subtle); text-align: center; }
+.matrix__table thead th { border-top: 0; color: var(--color-text-primary); font-weight: 600; }
+.matrix__table tbody th { text-align: left; font-weight: 500; color: var(--color-text-primary); }
+.matrix__self { color: var(--color-chart-1); }
+.matrix__cell { font-size: 1.125rem; color: var(--color-text-secondary); }
+.matrix__cell--yes { color: var(--color-positive-text); }
+.matrix__cell--partial { color: var(--color-text-primary); }

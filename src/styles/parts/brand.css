@@ -1,0 +1,51 @@
+/* ═══════════════════════════════════════════════════════════
+   HOLOGRAPHIC MEMORY BRAND
+   The one place the HMS brand is defined. tokens.css is the shared
+   WritersLogic system; this file re-points its accent slots at the HMS
+   violet so the shared components (buttons, links, focus, charts) render
+   in HMS colours, and maps the slate text scale for the light theme.
+   Imported last so these unlayered rules win over the @theme layer.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --hms-accent: #8b7cf6;        /* 5.0:1 on --color-bg-canvas #17212D */
+  --hms-accent-strong: #a89df9; /* text-sized accent, 7.0:1 */
+  --hms-accent-soft: rgb(139 124 246 / 0.45);
+  --hms-code-bg: #0e141b;
+  --hms-code-fg: #e4e8ec;
+
+  --color-teal-300: var(--hms-accent-strong);
+  --color-teal-400: var(--hms-accent);
+  --color-chart-1: var(--hms-accent);
+  --color-action-primary: var(--hms-accent);
+  --color-action-primary-hover: var(--hms-accent-strong);
+  --color-focus: var(--hms-accent-strong);
+}
+
+[data-theme="light"] {
+  --hms-accent: #5b4bd1;        /* 5.6:1 on #F5F0E6 */
+  --hms-accent-strong: #4535b0; /* 7.6:1 */
+  --hms-accent-soft: rgb(91 75 209 / 0.4);
+
+  /* Utility classes written for the dark page read the slate scale as text. */
+  --color-slate-100: #0c1219;
+  --color-slate-200: #1f2933;
+  --color-slate-300: #3a4450;
+  --color-action-primary-hover: #4535b0;
+  --color-surface-dark: #f5f0e6; /* page shell follows the vellum canvas */
+}
+
+[data-theme="light"] :is(.border-white\/5, .border-white\/10) {
+  border-color: rgb(12 18 25 / 0.12);
+}
+
+/* Code stays dark in both themes. */
+.code-surface { background: var(--hms-code-bg); border: 1px solid rgb(255 255 255 / 0.1); }
+.code-surface pre { color: var(--hms-code-fg); }
+
+.theme-toggle {
+  display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem;
+  border: 1px solid var(--color-border-subtle); border-radius: 999px;
+  background: none; color: var(--color-text-primary); cursor: pointer;
+}
+.theme-toggle:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
