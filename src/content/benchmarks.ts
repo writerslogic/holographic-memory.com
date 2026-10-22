@@ -1,12 +1,11 @@
 // Competitive benchmark figures for the product page. Every number comes from
 // data/bench-cells.json, a snapshot of docs/benchmarks/comparison.cells.json in
 // the HMS repo at BENCH_SOURCE_SHA, filtered to the Intel Core Ultra 9 185H runs.
-// Pinned to the head of writerslogic/holographic-memory PR #158; repin to its
-// squash commit on main after merge. Refresh: copy the cells file from a newer
-// HMS commit and update the SHA.
+// Pinned to the commit on main that added these results (PR #158). Refresh: copy
+// the cells file from a newer HMS commit and update the SHA.
 import cells from "./data/bench-cells.json";
 
-export const BENCH_SOURCE_SHA = "a860cab2324ee1b07a14ddcd3ff67352b139f1f8";
+export const BENCH_SOURCE_SHA = "28a0a5b1bc6e84037fed51fdba8c6b508f821502";
 export const BENCH_REPO = "https://github.com/writerslogic/holographic-memory";
 export const benchSource = (path: string): string =>
   `${BENCH_REPO}/blob/${BENCH_SOURCE_SHA}/${path}`;
