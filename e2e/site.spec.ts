@@ -33,7 +33,8 @@ test("ships server-rendered content and metadata", async ({ request }) => {
   expect(html).toContain('id="benchmarks"');
   expect(html).toContain('"@type":"FAQPage"');
   expect(html).toContain('<link rel="manifest" href="/manifest.webmanifest"');
-  expect(html).toContain('<!--email_off--><div id="root">');
+  // Cloudflare consumes the email_off markers, so check the outcome: no injected decoder.
+  expect(html).not.toContain("email-decode.min.js");
 });
 
 test("ships the static site files", async ({ request }) => {
