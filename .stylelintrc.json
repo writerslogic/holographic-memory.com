@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/stylelintrc.json",
+  "//": "WritersLogic CSS guardrails — correctness-focused, Tailwind v4 CSS-first aware.",
+  "//2": "Deliberately NOT stylelint-config-standard: that fights the hand-authored brand",
+  "//3": "stylesheet (~1.4k formatting-only problems). We keep only high-signal rules that",
+  "//4": "catch real regressions and that a clean file passes. Formatting is owned by the",
+  "//5": "author/Prettier, not Stylelint. See CONTRIBUTING.md > CSS & design-system guardrails.",
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "source",
+          "utility",
+          "variant",
+          "custom-variant",
+          "apply",
+          "reference",
+          "config",
+          "plugin",
+          "tailwind",
+          "layer",
+          "screen"
+        ]
+      }
+    ],
+    "at-rule-no-deprecated": null,
+    "function-no-unknown": [
+      true,
+      { "ignoreFunctions": ["theme", "--alpha", "--spacing", "screen"] }
+    ],
+    "color-no-invalid-hex": true,
+    "unit-no-unknown": true,
+    "property-no-unknown": true,
+    "declaration-block-no-duplicate-properties": [
+      true,
+      { "ignore": ["consecutive-duplicates-with-different-values"] }
+    ],
+    "declaration-block-no-shorthand-property-overrides": true,
+    "no-duplicate-at-import-rules": true,
+    "font-family-no-duplicate-names": true,
+    "keyframe-declaration-no-important": true,
+    "keyframe-block-no-duplicate-selectors": true,
+    "no-duplicate-selectors": null,
+    "no-invalid-double-slash-comments": true,
+    "no-invalid-position-at-import-rule": null,
+    "no-irregular-whitespace": true,
+    "no-empty-source": true,
+    "block-no-empty": true,
+    "comment-no-empty": true,
+    "media-feature-name-no-unknown": true,
+    "selector-pseudo-class-no-unknown": true,
+    "selector-pseudo-element-no-unknown": true,
+    "string-no-newline": true
+  }
+}

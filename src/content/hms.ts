@@ -6,6 +6,8 @@
 // committed source is worded as "in progress". writerslogic.com keeps a shorter copy
 // of the shared claims in src/content/hms.ts; keep the two in step.
 
+import { SIFT_QPS_FACTOR_095 } from "./benchmarks";
+
 export const HMS_NAME = "Holographic Memory";
 export const HMS_FULL_NAME = "WritersLogic Holographic Memory";
 export const HMS_CLOUD_NAME = "WritersLogic Holographic Memory Cloud";
@@ -20,8 +22,8 @@ export const HMS_OG_IMAGE_ALT =
 
 export const HMS_TAGLINE =
   "Local, encrypted, provenance-aware memory for AI agents.";
-export const HMS_ONE_LINER =
-  "An embeddable memory and search engine that runs on your machine: hybrid document search and a vector-symbolic fact store in one Rust library, with optional encryption at rest and signed provenance. No service calls, no telemetry.";
+export const HMS_HERO_LINE =
+  "Search and memory that run inside your app, on your machine. No service calls, no telemetry.";
 
 export const HMS_REPO = "https://github.com/writerslogic/holographic-memory";
 export const HMS_LINKS = {
@@ -45,52 +47,7 @@ export const hmsSource = (path: string): string =>
 
 export const HMS_CONTACT_EMAIL = "david@writerslogic.com";
 
-// ── Benchmarks: committed results only ──────────────────────────────────────
-
-export interface HmsBenchmark {
-  label: string;
-  hms: string;
-  reference: string;
-  note: string;
-  source: string; // path in the HMS repo, main branch
-  outcome: "ahead" | "behind" | "hms-only";
-}
-
-export const HMS_BENCHMARKS: HmsBenchmark[] = [
-  {
-    label: "SciFact retrieval quality, nDCG@10",
-    hms: "0.729 hybrid",
-    reference: "HMS BM25 alone 0.688, HMS dense alone 0.645",
-    note: "5,183 documents, 300 queries, MiniLM embeddings supplied by the harness. Quality only: the run was on a loaded machine, so no latency is quoted.",
-    source: "benchmarks/results/public_scifact.json",
-    outcome: "ahead",
-  },
-  {
-    label: "NFCorpus retrieval quality, nDCG@10",
-    hms: "0.355 hybrid",
-    reference: "BM25 0.323, dense 0.317",
-    note: "3,633 documents, 323 queries. Quality only.",
-    source: "benchmarks/results/public_nfcorpus.json",
-    outcome: "ahead",
-  },
-  {
-    label: "Lexical search throughput vs SQLite FTS5",
-    hms: "4.48x the queries per second",
-    reference:
-      "SQLite FTS5 (3.53.4); HMS p99 0.52 ms vs 5.13 ms; HMS peak memory 1.07x SQLite's",
-    note: "NFCorpus, 324 queries x 8 passes, 11 interleaved rounds, both engines driven from Node 26 on one Intel Core Ultra 9 185H host (WSL2). One host, one workload.",
-    source: "benchmarks/results/serving_memory_v40.json",
-    outcome: "ahead",
-  },
-  {
-    label: "Vector search, glove-100-angular recall@10 (vertex graph index)",
-    hms: "2,892 QPS at recall 0.959; 760 QPS at recall 0.993",
-    reference: "HMS-only tuning run; head-to-head comparison in progress",
-    note: "1.18M vectors, degree 64, build ef 500, one query thread, median of 5 repeats. Tuned on 2,000 train vectors held out of the index, not the ann-benchmarks test set. Modal x86_64 container, 8 vCPU, 32 GiB, AVX-512. No competitor has been measured on the same machine yet.",
-    source: "benchmarks/results/ann_modal_graph_v1.raw.json",
-    outcome: "hms-only",
-  },
-];
+// ── Durability (committed results file) ─────────────────────────────────────
 
 export const HMS_DURABILITY = {
   summary:
@@ -99,75 +56,10 @@ export const HMS_DURABILITY = {
   source: "benchmarks/results/durability_matrix_v2.json",
 } as const;
 
-export const HMS_IN_PROGRESS = [
-  "Durable replace and delete latency against SQLite FTS5, tantivy and Lucene",
-  "Vector search against hnswlib, FAISS and other indexes on the same machine",
-  "Head-to-head runs against Mem0, Zep, Chroma and Qdrant on the same hardware",
-  "Held-out LongMemEval answer accuracy",
-] as const;
-
-// ── What ships (README "What ships today", main) ────────────────────────────
-
-export interface HmsCapability {
-  title: string;
-  body: string;
-  status: string;
-  source: string;
-}
-
-export const HMS_CAPABILITIES: HmsCapability[] = [
-  {
-    title: "Hybrid document search",
-    body: "Stemmed BM25 fused with exact cosine over embeddings you supply, metadata filters and byte offsets back into the source.",
-    status: "Ships",
-    source: "README.md",
-  },
-  {
-    title: "Atomic updates, crash-safe storage",
-    body: "Atomic replace and delete on a CRC-checked, append-only log with verified compaction and a single-writer process lock.",
-    status: "Ships",
-    source: "README.md",
-  },
-  {
-    title: "Encryption at rest",
-    body: "AES-256-GCM with an Argon2id-derived key over the log, index caches and stored text. Compile-time opt-in (security feature). Metadata, file names and sizes are not encrypted.",
-    status: "Ships (opt-in)",
-    source: "docs/PRIVACY.md",
-  },
-  {
-    title: "Signed provenance",
-    body: "A signed audit log, credential-gated agent access, and COSE, SCITT and C2PA statements over Ed25519 with W3C DID identity (provenance feature).",
-    status: "Ships (opt-in)",
-    source: "README.md",
-  },
-  {
-    title: "Purge that erases text",
-    body: "Delete removes a record from every query at once; without purge its journal frame stays until compaction. Purge rewrites the journal without it, overwrites the replaced generation with zeros and syncs before it returns. A test scans every file in the store for the deleted text.",
-    status: "Ships",
-    source: "docs/memory-api/README.md",
-  },
-  {
-    title: "Vector-symbolic fact memory",
-    body: "Bind, bundle and permute over sparse hypervectors; triples stored as bound composites, multi-hop queries and Hopfield cleanup.",
-    status: "Ships (runtime opt-in)",
-    source: "README.md",
-  },
-  {
-    title: "On-device models",
-    body: "Optional local Qwen3 embedding, reranking and generation from weights you provide. Never downloads.",
-    status: "Ships (opt-in)",
-    source: "README.md",
-  },
-  {
-    title: "hms-server",
-    body: "Multi-tenant HTTP API with scoped per-tenant keys, TLS, snapshots and an OpenAPI 3.1 contract. Single node.",
-    status: "Ships",
-    source: "docs/SERVER.md",
-  },
-];
+// ── Known limits ────────────────────────────────────────────────────────────
 
 export const HMS_LIMITS = [
-  "The older sparse vector path (memorize_vector) is experimental and far behind HNSW libraries: recall@10 0.252 at 33.7 QPS on glove-100 against hnswlib 0.831 at 3,368 QPS (public_glove-100-angular.json). Use the vertex graph index for vector search.",
+  "The older sparse vector path (memorize_vector) is experimental and far behind HNSW libraries: on glove-100, Apple M4: recall@10 0.252 at 33.7 QPS against hnswlib 0.831 at 3,368 QPS (public_glove-100-angular.json). Use the vertex graph index for vector search.",
   "Hypervector sketches and term counts are not encryption; anyone holding a plaintext store can test candidate text against it. Use the encrypted store for confidentiality.",
   "Deleted bytes can survive in places no file API reaches: SSD wear levelling, snapshots, backups and swap. Pair purge with encryption or full-disk encryption.",
   "No MCP server ships yet, the npm package is deprecated (build the Node module from source) and Python is an HTTP client, not in-process search.",
@@ -186,11 +78,15 @@ export interface HmsCompetitorRow {
   property: string;
   hms: string;
   others: Record<(typeof HMS_COMPETITORS)[number], string>;
+  // Matrix glyphs, in the order HMS, then HMS_COMPETITORS. Derived from the text
+  // cells: "Not documented" is unknown; a paid add-on or caveat is partial.
+  marks: ("yes" | "partial" | "no" | "unknown")[];
 }
 
 export const HMS_COMPETITOR_ROWS: HmsCompetitorRow[] = [
   {
     property: "Runs inside your app, no service",
+    marks: ["yes", "partial", "no", "partial", "partial"],
     hms: "Yes: Rust library, Node module, C ABI",
     others: {
       Mem0: "Open-source library; Mem0 Platform is hosted",
@@ -201,6 +97,7 @@ export const HMS_COMPETITOR_ROWS: HmsCompetitorRow[] = [
   },
   {
     property: "Encryption at rest in the open-source product",
+    marks: ["yes", "unknown", "partial", "unknown", "partial"],
     hms: "Built in (opt-in)",
     others: {
       Mem0: "Not documented",
@@ -211,6 +108,7 @@ export const HMS_COMPETITOR_ROWS: HmsCompetitorRow[] = [
   },
   {
     property: "Signed provenance of stored records",
+    marks: ["yes", "unknown", "unknown", "unknown", "unknown"],
     hms: "COSE, SCITT, C2PA over Ed25519",
     others: {
       Mem0: "Not documented",
@@ -221,6 +119,7 @@ export const HMS_COMPETITOR_ROWS: HmsCompetitorRow[] = [
   },
   {
     property: "Deleted text erased from disk",
+    marks: ["yes", "unknown", "partial", "unknown", "partial"],
     hms: "Purge rewrites the journal and zeroes old generations before returning",
     others: {
       Mem0: "Not documented",
@@ -247,6 +146,13 @@ export const HMS_LICENSE_NOTE =
   "The source on main is Apache-2.0. Packages published so far (crate 0.6.1, holographic-sdk 0.1.2 on PyPI) were released under AGPL-3.0-or-later and stay available under those terms.";
 
 // ── Open source vs Cloud ────────────────────────────────────────────────────
+// Cloud is not a hosted engine. Memory and the engine stay on the user's machine;
+// Cloud adds end-to-end encrypted sync and backup (the server holds ciphertext
+// only), provenance and deletion-certificate verification against a transparency
+// log, and team key management, audit and SSO, run on Cloudflare.
+
+export const HMS_LOCAL_FIRST_NOTE =
+  `Your memory stays on your machines. Cloud keeps your machines in step: encrypted sync across your laptops, desktops and team, a backup you can restore anywhere, and independent verification of the provenance and deletion records your stores sign. We never hold your keys, never see your documents and never run your searches. ${HMS_CLOUD_NAME} runs its sync, backup and verification on Cloudflare.`;
 
 export interface HmsCompareRow {
   feature: string;
@@ -255,20 +161,19 @@ export interface HmsCompareRow {
 }
 
 export const HMS_OSS_VS_CLOUD: HmsCompareRow[] = [
-  { feature: "License", oss: "Apache-2.0 (source on main)", cloud: "Managed service" },
-  { feature: "Where your data lives", oss: "Your machine or your servers", cloud: "Managed, multi-tenant; single-tenant and your-cloud options on Enterprise" },
-  { feature: "Hybrid search, fact memory, atomic log", oss: "Included", cloud: "Included" },
-  { feature: "Encryption at rest", oss: "Opt-in at compile time", cloud: "On by default" },
-  { feature: "Signed provenance and audit log", oss: "Included (opt-in)", cloud: "Included, plus a hosted verification service on Enterprise" },
-  { feature: "HTTP API", oss: "hms-server, single node, you operate it", cloud: "Operated for you, with high availability" },
-  { feature: "Encrypted device and cloud sync", oss: "Not included", cloud: "Planned" },
-  { feature: "Bring your own key (KMS), SSO, audit export", oss: "Not included", cloud: "Team and Enterprise" },
+  { feature: "Engine, search and fact memory", oss: "On your machine", cloud: "Still on your machine" },
+  { feature: "Where plaintext lives", oss: "Only on your devices", cloud: "Only on your devices; the server stores ciphertext" },
+  { feature: "Encryption at rest and signed provenance", oss: "Included (opt-in features)", cloud: "Included" },
+  { feature: "End-to-end encrypted sync and backup across devices", oss: "Not included", cloud: "Included" },
+  { feature: "Tamper-evident, hash-chained change history", oss: "Local journal", cloud: "Checked on every device" },
+  { feature: "Provenance and deletion-record verification, transparency log", oss: "Verify locally", cloud: "Hosted verification, your own append-only log, offline-verifiable receipts" },
+  { feature: "Scoped API keys, signed audit export, SSO (OIDC)", oss: "Not included", cloud: "Audit export in Cloud; all three in Team and Enterprise" },
   { feature: "Support", oss: "GitHub issues and discussions", cloud: "Email, shared channel or named contact by tier" },
 ];
 
 // ── Tiers ───────────────────────────────────────────────────────────────────
-// Prices are deliberately absent: the business plan holds them as indicative until
-// the Cloud prototype measures cost to serve. The checkout CTA is behind
+// Prices are deliberately absent: offerings-and-pricing holds them as indicative
+// until cost to serve is measured. The checkout CTA is behind
 // VITE_HMS_CHECKOUT_ENABLED (see src/content/flags.ts).
 
 export type HmsPlan = "community" | "cloud" | "team" | "enterprise";
@@ -289,10 +194,10 @@ export const HMS_TIERS: HmsTier[] = [
     name: "Community",
     price: "Free",
     status: "Available now",
-    summary: "The open-source engine and server, self-hosted.",
+    summary: "The open-source engine and server on your own machines.",
     features: [
-      "Rust library, Node and Python clients, C ABI",
-      "Hybrid search, fact memory, atomic crash-safe log",
+      "Rust library, Python SDK, C ABI with Go, Java and .NET",
+      "Hybrid search, fact memory, crash-safe log",
       "Optional encryption at rest and signed provenance",
       "Support through GitHub",
     ],
@@ -303,12 +208,13 @@ export const HMS_TIERS: HmsTier[] = [
     name: "Cloud",
     price: "Usage-based",
     status: "In development",
-    summary: "Managed memory API with no minimum and a free monthly allowance.",
+    summary: "Sync, backup and verification for the memory you keep locally. Pay for encrypted storage, sync operations and verifications, each with a free monthly allowance.",
     features: [
-      "Encrypted at rest by default",
-      "Pay for storage, writes and queries",
-      "Encrypted sync between devices and cloud",
-      "Business-hours email support",
+      "End-to-end encrypted sync (AES-256-GCM, keys only on your devices); concurrent edits converge and conflicts are reported",
+      "Encrypted backup of each store's full history; restore any device with your sync key",
+      "Tamper-evident history: reordered, altered or spliced changes are detected on your device",
+      "Provenance and deletion-record verification with receipts you can check offline",
+      "Signed audit export; business-hours email support",
     ],
     checkout: true,
   },
@@ -317,25 +223,26 @@ export const HMS_TIERS: HmsTier[] = [
     name: "Team",
     price: "Monthly plan",
     status: "In development",
-    summary: "Managed or self-hosted with support, for a team shipping agents.",
+    summary: "Encrypted sync and verification shared across a team, with usage included each month.",
     features: [
-      "Everything in Cloud, with included usage",
-      "SSO and audit export",
-      "Shared support channel",
-      "Uptime commitment",
+      "Everything in Cloud, with included monthly usage and a larger storage quota",
+      "Scoped API keys with rotation and instant revocation",
+      "SSO through your identity provider (OIDC) and a signed, exportable audit log",
+      "Shared support channel and uptime commitment",
     ],
     checkout: true,
   },
   {
     plan: "enterprise",
     name: "Enterprise",
-    price: "Annual contract",
+    price: "Talk to us",
     status: "Talk to us",
-    summary: "Single-tenant, your cloud, or self-hosted, with key management and compliance.",
+    summary: "Your keys, your infrastructure, compliance reporting.",
     features: [
+      "Annual agreement with custom quotas",
       "Bring your own key (KMS / HSM)",
-      "Provenance verification service and compliance reports",
-      "Single-tenant or bring-your-own-cloud deployment",
+      "Transparency log and verification you can run yourself",
+      "Compliance reports and audit retention",
       "Named support contact",
     ],
     checkout: true,
@@ -359,7 +266,7 @@ export const HMS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How is this different from Mem0, Zep, Chroma or Qdrant?",
-    a: "Holographic Memory is a library you embed, not a service you call, and it puts encryption at rest, signed provenance and a text-erasing purge in the open-source engine itself. Vector search runs on a vertex graph index; a same-machine comparison with HNSW libraries is in progress.",
+    a: `Holographic Memory is a library you embed, not a service you call, and it puts encryption at rest, signed provenance and a text-erasing purge in the open-source engine itself. Vector search runs on a vertex graph index; on SIFT-1M it served ${SIFT_QPS_FACTOR_095} the queries per second of hnswlib at recall 0.95 on the same machine (benchmarks section).`,
   },
   {
     q: "Why is it called holographic?",
@@ -378,8 +285,8 @@ export const HMS_FAQ: { q: string; a: string }[] = [
     a: "Rust natively; Node.js bindings built from source; a Python HTTP client (holographic-sdk) for hms-server; and a C ABI with Go, Java and .NET bindings.",
   },
   {
-    q: "When is the Cloud available?",
-    a: `${HMS_CLOUD_NAME} is in development. Join the waitlist and we will write when the beta opens. Pricing is published at launch.`,
+    q: "What does the Cloud do if the engine runs locally?",
+    a: `${HMS_CLOUD_NAME} is sync, backup and verification, not a hosted engine. Your documents, embeddings, memory index, queries and sync key never leave your devices. Every change is sealed on your device before upload, so the service holds only sealed bytes and the metadata needed to order them (change counts, sizes, times, device and key identifiers) plus your account and billing details. For verification it keeps hashes, the signer's public identity and the claim time, never the statement's contents. It is in development: join the waitlist and we will write when the beta opens. Prices are published at launch.`,
   },
 ];
 
@@ -391,7 +298,7 @@ export const HMS_META = {
     "Embeddable memory for AI agents that runs on your machine. Hybrid search, vector-symbolic fact memory, optional encryption at rest and signed provenance in one open-source Rust engine. No service calls.",
   ogTitle: `${HMS_FULL_NAME}`,
   ogDescription:
-    "Local, encrypted, provenance-aware memory for AI agents. Open-source Rust engine; managed Cloud in development.",
+    "Local, encrypted, provenance-aware memory for AI agents. Open-source Rust engine that stays on your machine; encrypted sync, backup and verification Cloud in development.",
 } as const;
 
 export const HMS_JSON_LD = {
@@ -424,3 +331,50 @@ export const HMS_JSON_LD = {
     url: HMS_COMPANY_URL,
   },
 } as const;
+
+// ── Use cases, integrations and the provenance platform ─────────────────────
+
+export const HMS_USE_CASES = [
+  {
+    title: "Agent memory",
+    body: "Give an agent durable recall of facts, conversations and decisions that lives in its own process, survives crashes and can be purged on request.",
+  },
+  {
+    title: "RAG over private documents",
+    body: "Index contracts, notes or code on the machine that already holds them. BM25 and the embeddings you choose, fused, with byte offsets back to the source; nothing is uploaded.",
+  },
+  {
+    title: "On-device apps",
+    body: "Ship search and memory inside a desktop or edge app through the Rust crate or the C ABI, with encryption at rest and no server to run.",
+  },
+] as const;
+
+export interface HmsIntegration {
+  name: string;
+  detail: string;
+  href: string;
+}
+
+// Adapters from integrations/ in the HMS repo (PR #106). None is published to a
+// registry yet, so every entry installs from source.
+export const HMS_INTEGRATIONS: HmsIntegration[] = [
+  {
+    name: "Python: holographic-integrations",
+    detail: "LangChain, LangGraph, LlamaIndex, Haystack, DSPy, OpenAI Agents, Pydantic AI, smolagents, LiteLLM, CrewAI, AutoGen, AG2, Semantic Kernel, Mem0 and Letta, one extra per framework",
+    href: `${HMS_REPO}/tree/main/integrations/python`,
+  },
+  {
+    name: "JavaScript: @holographic-memory/*",
+    detail: "LangChain.js, LlamaIndex.TS, Mastra, OpenAI Agents SDK and the Vercel AI SDK",
+    href: `${HMS_REPO}/tree/main/integrations/js`,
+  },
+];
+
+export const HMS_PLATFORM = {
+  intro:
+    "Holographic Memory is part of the WritersLogic provenance platform: the same signed-statement substrate (COSE and SCITT over Ed25519, W3C DID identity) runs through every product.",
+  links: [
+    { name: "WritersProof", detail: "Records how a document is written and seals that process into signed evidence anyone can verify", href: "https://writersproof.com" },
+    { name: "Draftbridge", detail: "Coming soon", href: "" },
+  ],
+};

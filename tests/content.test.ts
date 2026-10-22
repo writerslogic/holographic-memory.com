@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  HMS_BENCHMARKS,
-  HMS_CAPABILITIES,
+  BENCH_SOURCE_SHA,
+  PROOF_CHIPS,
+  TEXT_GROUPS,
+  VECTOR_GROUPS,
+} from "../src/content/benchmarks";
+import {
   HMS_DURABILITY,
   HMS_FAQ,
   HMS_TIERS,
@@ -12,14 +16,22 @@ import {
 // Claims on the page must trace to committed files in the HMS repository, and paid
 // prices stay off the site until the business plan publishes them.
 describe("product content", () => {
-  it("cites every benchmark to a committed results file", () => {
-    for (const b of [...HMS_BENCHMARKS, HMS_DURABILITY]) {
-      expect(b.source).toMatch(/^benchmarks\/results\/[\w.-]+\.json$/);
-    }
+  it("cites every benchmark to a committed results file at a pinned commit", () => {
+    expect(BENCH_SOURCE_SHA).toMatch(/^[0-9a-f]{40}$/);
+    const pinned = new RegExp(
+      `^https://github\\.com/writerslogic/holographic-memory/blob/${BENCH_SOURCE_SHA}/benchmarks/results/competitive/[\\w.-]+\\.json$`,
+    );
+    for (const g of [...VECTOR_GROUPS, ...TEXT_GROUPS]) expect(g.source).toMatch(pinned);
+    for (const c of PROOF_CHIPS) expect(c.href).toMatch(pinned);
+    expect(HMS_DURABILITY.source).toMatch(/^benchmarks\/results\/[\w.-]+\.json$/);
   });
 
-  it("cites every capability to a repository document", () => {
-    for (const c of HMS_CAPABILITIES) expect(c.source).toMatch(/\.md$/);
+  it("charts HMS against at least one competitor, measured", () => {
+    for (const g of [...VECTOR_GROUPS, ...TEXT_GROUPS]) {
+      expect(g.rows.filter((r) => r.hms)).toHaveLength(1);
+      expect(g.rows.length).toBeGreaterThan(1);
+      for (const r of g.rows) expect(r.value).toBeGreaterThan(0);
+    }
   });
 
   it("publishes no dollar amounts", () => {

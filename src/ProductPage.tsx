@@ -1,9 +1,10 @@
 import { HmsMark } from "./components/HmsMark";
-import { HmsArchitecture } from "./components/HmsArchitecture";
+import { BenchChart } from "./components/BenchChart";
+import { CodeTabs } from "./components/CodeTabs";
+import { CompareMatrix, MATRIX_LEGEND } from "./components/CompareMatrix";
 import {
-  HMS_BENCHMARKS,
-  HMS_CAPABILITIES,
   HMS_CLOUD_NAME,
+  HMS_COMPANY_URL,
   HMS_COMPETITOR_CHECKED,
   HMS_COMPETITOR_ROWS,
   HMS_COMPETITOR_SOURCES,
@@ -11,21 +12,33 @@ import {
   HMS_DURABILITY,
   HMS_FAQ,
   HMS_FULL_NAME,
-  HMS_IN_PROGRESS,
+  HMS_INTEGRATIONS,
   HMS_LICENSE_NOTE,
   HMS_LIMITS,
   HMS_LINKS,
+  HMS_LOCAL_FIRST_NOTE,
   HMS_NAME,
+  HMS_HERO_LINE,
   HMS_OSS_VS_CLOUD,
-  HMS_ONE_LINER,
+  HMS_PLATFORM,
   HMS_TAGLINE,
   HMS_TIERS,
+  HMS_USE_CASES,
   hmsCheckoutUrl,
   hmsSource,
   hmsWaitlistUrl,
   type HmsTier,
 } from "./content/hms";
 import { HMS_CHECKOUT_ENABLED } from "./content/flags";
+import {
+  BENCH_COMPARISON_URL,
+  BENCH_HARDWARE,
+  BENCH_LOSSES,
+  PROOF_CHIPS,
+  TEXT_GROUPS,
+  TEXT_QUALITY,
+  VECTOR_GROUPS,
+} from "./content/benchmarks";
 
 const RUST_SNIPPET = `# Cargo.toml: Apache-2.0 source from main
 cargo add holographic-memory --git https://github.com/writerslogic/holographic-memory
@@ -49,6 +62,11 @@ fn main() -> anyhow::Result<()> {
     println!("{} {:?}", hits[0].document_id, hits[0].source_uri);
     Ok(())
 }`;
+
+const INSTALL = [
+  { lang: "Rust", cmd: "cargo add holographic-memory --git https://github.com/writerslogic/holographic-memory" },
+  { lang: "Python", cmd: "pip install holographic-sdk" },
+];
 
 const PY_SHELL = `# hms-server stores vectors you supply; the SDK is its HTTP client
 cargo build --release --features server --bin hms-server
@@ -110,12 +128,12 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
         {label}
       </figcaption>
       <div
-        className="rounded-xl bg-slate-950/60 border border-white/10 p-4 overflow-x-auto"
+        className="code-surface rounded-xl p-4 overflow-x-auto"
         tabIndex={0}
         role="region"
         aria-label={`${label} code, scrollable`}
       >
-        <pre className="text-sm leading-relaxed text-slate-100 font-mono m-0">
+        <pre className="text-sm leading-relaxed font-mono m-0">
           <code>{code}</code>
         </pre>
       </div>
@@ -162,7 +180,67 @@ function TierCta({ tier }: { tier: HmsTier }) {
   );
 }
 
+const NAV = [
+  { href: "#benchmarks", label: "Benchmarks" },
+  { href: "#how", label: "How it works" },
+  { href: "#use-cases", label: "Use cases" },
+  { href: "#quickstart", label: "Quickstart" },
+  { href: "#compare", label: "Compare" },
+  { href: "#pricing", label: "Plans" },
+  { href: "#faq", label: "FAQ" },
+];
+
+const STEPS = [
+  {
+    title: "Store",
+    body: "Documents, facts and the embeddings you choose go into one append-only, checksummed log on your disk, encrypted if you turn it on.",
+  },
+  {
+    title: "Index",
+    body: "BM25 postings, a vertex-graph vector index and superposed fact vectors are built in the same process. No server, no network call.",
+  },
+  {
+    title: "Recall",
+    body: "Hybrid search fuses lexical and vector scores and returns byte offsets into the source; signed provenance records who stored what, and when.",
+  },
+];
+
+function Section({
+  id,
+  title,
+  intro,
+  alt = false,
+  children,
+}: {
+  id: string;
+  title: string;
+  intro?: React.ReactNode;
+  alt?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      id={id}
+      className={`relative section-x py-16 scroll-mt-28 ${alt ? "border-y border-white/5 bg-white/[0.01]" : ""}`}
+      aria-labelledby={`${id}-heading`}
+    >
+      <div className="max-w-5xl mx-auto">
+        <h2 id={`${id}-heading`} className="section-heading text-center">
+          {title}
+        </h2>
+        {intro && (
+          <p className="text-slate-300 text-center max-w-2xl mx-auto leading-relaxed mb-10">
+            {intro}
+          </p>
+        )}
+        {children}
+      </div>
+    </section>
+  );
+}
+
 export function ProductPage() {
+  const competitorColumns = [HMS_NAME, ...HMS_COMPETITORS];
   return (
     <main id="main-content" className="relative">
       <div className="overlay" aria-hidden="true">
@@ -171,31 +249,31 @@ export function ProductPage() {
       </div>
 
       {/* Hero */}
-      <section
-        className="relative pt-24 pb-16 section-x"
-        aria-labelledby="hms-heading"
-      >
+      <section className="relative pt-20 pb-12 section-x" aria-labelledby="hms-heading">
         <div className="max-w-4xl mx-auto text-center">
-          <HmsMark className="h-20 sm:h-24 mx-auto mb-8 text-slate-100" />
+          <HmsMark className="h-12 sm:h-14 mx-auto mb-5 text-slate-100" />
           <p className="text-teal-400 text-xs font-semibold tracking-widest uppercase mb-4">
             {HMS_FULL_NAME}
           </p>
           <h1
             id="hms-heading"
-            className="font-serif text-4xl sm:text-5xl font-semibold leading-tight tracking-tight mb-6 text-balance text-slate-100"
+            className="font-serif text-4xl sm:text-5xl font-semibold leading-tight tracking-tight mb-5 text-balance text-slate-100"
           >
             {HMS_TAGLINE}
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
-            {HMS_ONE_LINER}
+            {HMS_HERO_LINE}
           </p>
-          <div className="cta-stack mb-5">
-            <a
-              href="#quickstart"
-              className="btn-primary select-none"
-              data-umami-event="cta_hms_quickstart"
-              data-umami-event-page="hms"
-            >
+          <ul className="hero-install list-none p-0 m-0 mb-8" aria-label="Install">
+            {INSTALL.map((line) => (
+              <li key={line.cmd}>
+                <span className="hero-install__lang">{line.lang}</span>
+                <code className="hero-install__cmd">{line.cmd}</code>
+              </li>
+            ))}
+          </ul>
+          <div className="cta-stack mb-8">
+            <a href="#quickstart" className="btn-primary select-none" data-umami-event="cta_hms_quickstart" data-umami-event-page="hms">
               Get started
             </a>
             <a
@@ -209,414 +287,338 @@ export function ProductPage() {
               View on GitHub
             </a>
           </div>
-          <p className="text-sm text-slate-300">
-            Open source.{" "}
-            <a
-              href="#pricing"
-              className="underline underline-offset-4 decoration-teal-400/50 hover:text-teal-300"
-            >
-              {HMS_CLOUD_NAME}
-            </a>{" "}
-            is in development.
+          <ul className="proof-chips list-none p-0 m-0" aria-label="Measured results">
+            {PROOF_CHIPS.map((c) => (
+              <li key={c.label}>
+                <a href={c.href} className="proof-chip" target="_blank" rel="noopener noreferrer">
+                  <span className="proof-chip__value">{c.value}</span>
+                  <span className="proof-chip__label">{c.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="text-xs text-slate-300 mt-4">
+            {BENCH_HARDWARE}. <a href="#benchmarks" className="underline underline-offset-4">Method and losses</a>.
           </p>
         </div>
       </section>
 
+      <nav className="page-nav" aria-label="On this page">
+        <ul>
+          {NAV.map((n) => (
+            <li key={n.href}>
+              <a href={n.href}>{n.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       {/* Why */}
-      <section
-        className="relative section-x pb-20"
-        aria-labelledby="hms-why-heading"
-      >
+      <section className="relative section-x pt-14 pb-4" aria-labelledby="hms-why-heading">
         <div className="max-w-5xl mx-auto">
-          <h2 id="hms-why-heading" className="section-heading text-center">
-            Why it exists
-          </h2>
-          <p className="text-slate-300 text-center max-w-2xl mx-auto leading-relaxed mb-10">
-            Agent memory is mostly sold as a hosted API or a database server you
-            run and secure yourself. {HMS_NAME} puts the memory inside your
-            application, with encryption, provenance and erasure in the
-            open-source engine.
-          </p>
-          <div className="grid sm:grid-cols-2 gap-5">
+          <h2 id="hms-why-heading" className="sr-only">Why it exists</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {WHY.map((w) => (
               <div key={w.title} className="surface surface-panel rounded-2xl">
                 <h3 className="card-heading text-teal-300">{w.title}</h3>
-                <p className="text-slate-300 text-sm leading-relaxed m-0">
-                  {w.body}
-                </p>
+                <p className="text-slate-300 text-sm leading-relaxed m-0">{w.body}</p>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <h3 className="card-heading text-center mt-14">
-            How the alternatives document it
-          </h3>
-          <div
-            className="overflow-x-auto rounded-2xl border border-white/10 mt-4"
-            tabIndex={0}
-            role="region"
-            aria-label="Comparison with Mem0, Zep, Chroma and Qdrant, scrollable"
-          >
-            <table className="w-full min-w-[760px] text-sm text-left">
-              <thead className="bg-white/[0.03] text-slate-100">
+      <Section
+        id="benchmarks"
+        title="Benchmarks"
+        intro={
+          <>
+            Same machine, same queries, every competitor at its tuned operating point. Bars are
+            single-thread queries per second; every number links to a committed results file.{" "}
+            <ExternalLink href={BENCH_COMPARISON_URL}>Full comparison and method</ExternalLink>.
+          </>
+        }
+      >
+        <h3 className="card-heading">Vector search: SIFT-1M against hnswlib</h3>
+        <div className="grid md:grid-cols-3 gap-4 mb-10">
+          {VECTOR_GROUPS.map((g) => (
+            <BenchChart key={g.id} group={g} />
+          ))}
+        </div>
+        <h3 className="card-heading">Text search: BEIR against tantivy, Lucene and SQLite FTS5</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          {TEXT_GROUPS.map((g) => (
+            <BenchChart key={g.id} group={g} />
+          ))}
+        </div>
+        <details className="mt-4 surface surface-panel rounded-2xl">
+          <summary className="cursor-pointer font-semibold text-slate-100">
+            Same answers: nDCG@10 on each dataset
+          </summary>
+          <div className="overflow-x-auto mt-3" tabIndex={0} role="region" aria-label="nDCG@10 by system, scrollable">
+            <table className="w-full text-sm text-left text-slate-300">
+              <thead>
                 <tr>
-                  <th scope="col" className="p-4 font-semibold">Property</th>
-                  <th scope="col" className="p-4 font-semibold text-teal-300">{HMS_NAME}</th>
-                  {HMS_COMPETITORS.map((c) => (
-                    <th key={c} scope="col" className="p-4 font-semibold">{c}</th>
+                  <th scope="col" className="p-2">Dataset</th>
+                  {TEXT_QUALITY[0].values.map((v) => (
+                    <th key={v.label} scope="col" className="p-2">{v.label}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="text-slate-300">
-                {HMS_COMPETITOR_ROWS.map((r) => (
-                  <tr key={r.property} className="border-t border-white/10 align-top">
-                    <th scope="row" className="p-4 font-medium text-slate-100">{r.property}</th>
-                    <td className="p-4 text-slate-100">{r.hms}</td>
-                    {HMS_COMPETITORS.map((c) => (
-                      <td key={c} className="p-4">{r.others[c]}</td>
+              <tbody>
+                {TEXT_QUALITY.map((q) => (
+                  <tr key={q.dataset} className="border-t border-white/10">
+                    <th scope="row" className="p-2 font-medium text-slate-100">{q.dataset}</th>
+                    {q.values.map((v) => (
+                      <td key={v.label} className="p-2">{v.text}</td>
                     ))}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-300 mt-4 leading-relaxed">
-            From each vendor&rsquo;s own documentation, checked{" "}
-            {HMS_COMPETITOR_CHECKED}. &ldquo;Not documented&rdquo; means we
-            found no page saying so. Sources:{" "}
-            {HMS_COMPETITOR_SOURCES.map((s, i) => (
-              <span key={s.href}>
-                {i > 0 && ", "}
-                <ExternalLink href={s.href}>{s.label}</ExternalLink>
-              </span>
-            ))}
-            .
-          </p>
-        </div>
-      </section>
+        </details>
 
-      {/* What ships */}
-      <section
-        className="relative section-x py-16 border-y border-white/5 bg-white/[0.01]"
-        aria-labelledby="hms-ships-heading"
-      >
-        <div className="max-w-5xl mx-auto">
-          <h2 id="hms-ships-heading" className="section-heading text-center">
-            What ships today
-          </h2>
-          <p className="text-slate-300 text-center max-w-2xl mx-auto mb-10">
-            From the{" "}
-            <ExternalLink href={`${HMS_LINKS.github}#what-ships-today`}>
-              capability table in the repository
-            </ExternalLink>
-            .
-          </p>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 list-none p-0 m-0">
-            {HMS_CAPABILITIES.map((c) => (
-              <li key={c.title} className="surface surface-panel rounded-2xl">
-                <p className="text-xs text-teal-300 font-mono mb-2">
-                  {c.status}
-                </p>
-                <h3 className="card-heading">{c.title}</h3>
-                <p className="text-slate-300 text-sm leading-relaxed m-0">
-                  {c.body}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Quickstart */}
-      <section
-        id="quickstart"
-        className="relative section-x py-20 scroll-mt-24"
-        aria-labelledby="hms-quickstart-heading"
-      >
-        <div className="max-w-3xl mx-auto">
-          <h2 id="hms-quickstart-heading" className="section-heading text-center">
-            Quickstart
-          </h2>
-          <p className="text-slate-300 text-center max-w-2xl mx-auto mb-10">
-            Store a document and find it again, in Rust or Python. The{" "}
-            <ExternalLink href={HMS_LINKS.quickstart}>
-              five-minute quickstart
-            </ExternalLink>{" "}
-            adds encryption, filters and Node.js.
-          </p>
-
-          <h3 className="card-heading">Rust</h3>
-          <div className="grid gap-4 mb-10">
-            <CodeBlock label="shell: install" code={RUST_SNIPPET} />
-            <CodeBlock label="src/main.rs" code={RUST_CODE} />
-          </div>
-
-          <h3 className="card-heading">Python</h3>
-          <p className="text-slate-300 text-sm leading-relaxed mb-4">
-            Python talks to <code className="mono">hms-server</code> over HTTP
-            through{" "}
-            <ExternalLink href={HMS_LINKS.pypiSdk}>holographic-sdk</ExternalLink>
-            . Embed your text with any model and send the vectors.
-          </p>
-          <div className="grid gap-4 mb-8">
-            <CodeBlock label="shell: server and SDK" code={PY_SHELL} />
-            <CodeBlock label="quickstart.py" code={PY_CODE} />
-          </div>
-
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Node.js: build the native module from the repository (the npm
-            package is deprecated). Go, Java and .NET: use the C ABI bindings in{" "}
-            <ExternalLink href={`${HMS_LINKS.github}/tree/main/bindings`}>
-              bindings/
-            </ExternalLink>
-            .
-          </p>
-        </div>
-      </section>
-
-      {/* Architecture */}
-      <section
-        className="relative section-x py-16 border-y border-white/5 bg-white/[0.01]"
-        aria-labelledby="hms-arch-heading"
-      >
-        <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 id="hms-arch-heading" className="section-heading">
-              How it fits together
-            </h2>
-            <p className="text-slate-300 leading-relaxed mb-4">
-              One engine, linked into your process. Document search is
-              conventional: stemmed BM25 fused with exact cosine over the
-              embeddings you supply. The holographic part is the fact memory,
-              where bound facts are superposed into fixed-size vectors and
-              recalled by similarity.
-            </p>
-            <p className="text-slate-300 leading-relaxed m-0">
-              Everything lands in one append-only log with checksummed frames,
-              so a crash leaves the last committed state, and turning on
-              encryption makes the files ciphertext.
-            </p>
-          </div>
-          <div className="max-w-md w-full mx-auto">
-            <HmsArchitecture />
-          </div>
-        </div>
-      </section>
-
-      {/* Benchmarks */}
-      <section
-        id="benchmarks"
-        className="relative section-x py-20 scroll-mt-24"
-        aria-labelledby="hms-bench-heading"
-      >
-        <div className="max-w-5xl mx-auto">
-          <h2 id="hms-bench-heading" className="section-heading text-center">
-            Benchmarks
-          </h2>
-          <p className="text-slate-300 text-center max-w-2xl mx-auto mb-10">
-            Every number below comes from a results file committed to the
-            repository. They are single runs on the stated hardware, not a
-            substitute for testing your data. Where {HMS_NAME} loses, it is
-            listed under known limits.
-          </p>
-          <div
-            className="overflow-x-auto rounded-2xl border border-white/10"
-            tabIndex={0}
-            role="region"
-            aria-label="Benchmark results, scrollable"
-          >
-            <table className="w-full min-w-[640px] text-sm text-left">
-              <thead className="bg-white/[0.03] text-slate-100">
-                <tr>
-                  <th scope="col" className="p-4 font-semibold">Measure</th>
-                  <th scope="col" className="p-4 font-semibold">{HMS_NAME}</th>
-                  <th scope="col" className="p-4 font-semibold">Reference</th>
-                  <th scope="col" className="p-4 font-semibold">Source</th>
-                </tr>
-              </thead>
-              <tbody className="text-slate-300">
-                {HMS_BENCHMARKS.map((b) => (
-                  <tr key={b.label} className="border-t border-white/10 align-top">
-                    <th scope="row" className="p-4 font-medium text-slate-100">
-                      {b.label}
-                      <span className="block mt-1 text-xs font-normal text-slate-300">
-                        {b.note}
-                      </span>
-                    </th>
-                    <td className="p-4">
-                      <span className={b.outcome === "ahead" ? "text-teal-300 font-semibold" : "text-slate-100 font-semibold"}>
-                        {b.hms}
-                      </span>
-                      {b.outcome === "behind" && (
-                        <span className="block text-xs mt-1">Behind</span>
-                      )}
-                    </td>
-                    <td className="p-4">{b.reference}</td>
-                    <td className="p-4">
-                      <ExternalLink href={hmsSource(b.source)} className="font-mono text-xs break-all">
-                        {b.source.split("/").pop()}
-                      </ExternalLink>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5 mt-8">
-            <div className="surface surface-panel rounded-2xl">
-              <h3 className="card-heading">Crash and corruption testing</h3>
-              <p className="text-slate-300 text-sm leading-relaxed mb-2">
-                {HMS_DURABILITY.summary}
-              </p>
-              <p className="text-xs text-slate-300 m-0">
-                {HMS_DURABILITY.note} Source:{" "}
-                <ExternalLink href={hmsSource(HMS_DURABILITY.source)} className="font-mono">
-                  {HMS_DURABILITY.source.split("/").pop()}
-                </ExternalLink>
-              </p>
-            </div>
-            <div className="surface surface-panel rounded-2xl">
-              <h3 className="card-heading">Benchmarks in progress</h3>
-              <ul className="text-slate-300 text-sm leading-relaxed list-disc pl-5 m-0">
-                {HMS_IN_PROGRESS.map((t) => (
-                  <li key={t}>{t}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <details open className="mt-8 surface surface-panel rounded-2xl">
-            <summary className="cursor-pointer font-semibold text-slate-100">
-              Known limits
-            </summary>
-            <ul className="mt-4 text-slate-300 text-sm leading-relaxed list-disc pl-5">
-              {HMS_LIMITS.map((l) => (
-                <li key={l}>{l}</li>
+        <div className="grid md:grid-cols-2 gap-5 mt-8">
+          <div className="surface surface-panel rounded-2xl">
+            <h3 className="card-heading">Where we&rsquo;re not ahead yet</h3>
+            <ul className="text-slate-300 text-sm leading-relaxed list-disc pl-5 m-0">
+              {BENCH_LOSSES.map((l) => (
+                <li key={l.what}>
+                  <strong className="text-slate-100">{l.what}.</strong> {l.detail}
+                </li>
               ))}
             </ul>
-            <p className="text-xs text-slate-300 m-0">
-              Full statement:{" "}
-              <ExternalLink href={HMS_LINKS.privacy}>docs/PRIVACY.md</ExternalLink>
+          </div>
+          <div className="surface surface-panel rounded-2xl">
+            <h3 className="card-heading">How these were measured</h3>
+            <p className="text-slate-300 text-sm leading-relaxed mb-2">
+              {BENCH_HARDWARE}, under WSL2. Three serve rounds per system with bootstrap intervals;
+              tested range is SIFT-1M (1,000,000 vectors) and three BEIR sets of 3,633 to 57,600
+              documents, not larger. HMS is timed through its native Rust API; hnswlib through its
+              Python binding, one call per query. Text runs use HMS in BM25 lexical mode.
             </p>
-          </details>
+            <p className="text-slate-300 text-sm leading-relaxed m-0">
+              Durability: {HMS_DURABILITY.summary}{" "}
+              <ExternalLink href={hmsSource(HMS_DURABILITY.source)}>Source</ExternalLink>.
+            </p>
+          </div>
         </div>
-      </section>
+        <details className="mt-5 surface surface-panel rounded-2xl">
+          <summary className="cursor-pointer font-semibold text-slate-100">Known limits</summary>
+          <ul className="mt-4 text-slate-300 text-sm leading-relaxed list-disc pl-5">
+            {HMS_LIMITS.map((l) => (
+              <li key={l}>{l}</li>
+            ))}
+          </ul>
+        </details>
+      </Section>
 
-      {/* Open source vs Cloud */}
-      <section
-        className="relative section-x py-16 border-y border-white/5 bg-white/[0.01]"
-        aria-labelledby="hms-oss-heading"
+      <Section id="how" title="How it works" alt intro="One engine, linked into your process.">
+        <ol className="steps list-none p-0 m-0">
+          {STEPS.map((s, i) => (
+            <li key={s.title} className="steps__item surface surface-panel rounded-2xl">
+              <span className="steps__num" aria-hidden="true">{i + 1}</span>
+              <h3 className="card-heading">{s.title}</h3>
+              <p className="text-slate-300 text-sm leading-relaxed m-0">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="text-slate-300 text-sm text-center max-w-2xl mx-auto mt-8 mb-0">
+          The holographic part is the fact memory: bound facts are superposed into fixed-size
+          vectors and recalled by similarity. Document search is conventional BM25 and cosine.
+        </p>
+      </Section>
+
+      <Section id="use-cases" title="Use cases">
+        <div className="grid md:grid-cols-3 gap-5">
+          {HMS_USE_CASES.map((u) => (
+            <div key={u.title} className="surface surface-panel rounded-2xl">
+              <h3 className="card-heading text-teal-300">{u.title}</h3>
+              <p className="text-slate-300 text-sm leading-relaxed m-0">{u.body}</p>
+            </div>
+          ))}
+        </div>
+        <h3 className="card-heading text-center mt-12">Integrations</h3>
+        <p className="text-slate-300 text-sm text-center max-w-2xl mx-auto mb-6">
+          Framework adapters live in the repository and install from source until they are
+          published.
+        </p>
+        <ul className="grid md:grid-cols-2 gap-5 list-none p-0 m-0">
+          {HMS_INTEGRATIONS.map((g) => (
+            <li key={g.name} className="surface surface-panel rounded-2xl">
+              <h4 className="font-semibold text-slate-100 mb-2">
+                <ExternalLink href={g.href}>{g.name}</ExternalLink>
+              </h4>
+              <p className="text-slate-300 text-sm leading-relaxed m-0">{g.detail}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section
+        id="quickstart"
+        title="Quickstart"
+        alt
+        intro={
+          <>
+            Store a document and find it again. The{" "}
+            <ExternalLink href={HMS_LINKS.quickstart}>five-minute quickstart</ExternalLink> adds
+            encryption and filters.
+          </>
+        }
       >
-        <div className="max-w-5xl mx-auto">
-          <h2 id="hms-oss-heading" className="section-heading text-center">
-            Open source and Cloud
-          </h2>
-          <p className="text-slate-300 text-center max-w-2xl mx-auto mb-10">
-            The engine stays open. {HMS_CLOUD_NAME} adds what a team would
-            otherwise operate itself. Cloud features are planned and not yet
-            available.
+        <div className="max-w-3xl mx-auto">
+          <CodeTabs
+            label="Quickstart language"
+            tabs={[
+              {
+                id: "rust",
+                label: "Rust",
+                panel: (
+                  <div className="grid gap-4">
+                    <CodeBlock label="shell: install" code={RUST_SNIPPET} />
+                    <CodeBlock label="src/main.rs" code={RUST_CODE} />
+                  </div>
+                ),
+              },
+              {
+                id: "python",
+                label: "Python",
+                panel: (
+                  <div className="grid gap-4">
+                    <p className="text-slate-300 text-sm leading-relaxed m-0">
+                      Python talks to <code className="mono">hms-server</code> over HTTP through{" "}
+                      <ExternalLink href={HMS_LINKS.pypiSdk}>holographic-sdk</ExternalLink>. Embed
+                      your text with any model and send the vectors.
+                    </p>
+                    <CodeBlock label="shell: server and SDK" code={PY_SHELL} />
+                    <CodeBlock label="quickstart.py" code={PY_CODE} />
+                  </div>
+                ),
+              },
+            ]}
+          />
+          <p className="text-slate-300 text-sm leading-relaxed mt-6 mb-0">
+            Node.js: build the native module from the repository (the npm package is deprecated).
+            Go, Java and .NET: the C ABI bindings in{" "}
+            <ExternalLink href={`${HMS_LINKS.github}/tree/main/bindings`}>bindings/</ExternalLink>.
           </p>
-          <div
-            className="overflow-x-auto rounded-2xl border border-white/10"
-            tabIndex={0}
-            role="region"
-            aria-label="Open source and Cloud comparison, scrollable"
-          >
-            <table className="w-full min-w-[560px] text-sm text-left">
-              <thead className="bg-white/[0.03] text-slate-100">
+        </div>
+      </Section>
+
+      <Section
+        id="compare"
+        title="Compare"
+        intro={`How Mem0, Zep, Chroma and Qdrant document the same properties, checked ${HMS_COMPETITOR_CHECKED}.`}
+      >
+        <CompareMatrix
+          label="Comparison with Mem0, Zep, Chroma and Qdrant"
+          columns={competitorColumns}
+          rows={HMS_COMPETITOR_ROWS.map((r) => ({
+            property: r.property,
+            cells: [r.hms, ...HMS_COMPETITORS.map((c) => r.others[c])].map((note, i) => ({
+              mark: r.marks[i],
+              note,
+            })),
+          }))}
+        />
+        <p className="text-xs text-slate-300 mt-4 leading-relaxed">
+          {MATRIX_LEGEND.map((l) => `${l.glyph} ${l.word}`).join(" · ")}. Hover or use a screen
+          reader for each vendor&rsquo;s wording. Sources:{" "}
+          {HMS_COMPETITOR_SOURCES.map((s, i) => (
+            <span key={s.href}>
+              {i > 0 && ", "}
+              <ExternalLink href={s.href}>{s.label}</ExternalLink>
+            </span>
+          ))}
+          .
+        </p>
+      </Section>
+
+      <Section id="pricing" title="Open source and plans" alt intro={HMS_LOCAL_FIRST_NOTE}>
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 list-none p-0 m-0">
+          {HMS_TIERS.map((t) => (
+            <li
+              key={t.plan}
+              className={`surface surface-panel rounded-2xl flex flex-col ${t.plan === "community" ? "border-teal-400/40" : ""}`}
+            >
+              <h3 className="card-heading mb-1">{t.name}</h3>
+              <p className="text-xs text-teal-300 font-mono mb-3">{t.status}</p>
+              <p className="text-2xl font-semibold text-slate-100 mb-2">{t.price}</p>
+              <p className="text-slate-300 text-sm leading-relaxed mb-4">{t.summary}</p>
+              <ul className="text-slate-300 text-sm leading-relaxed list-disc pl-5 mb-6 flex-grow">
+                {t.features.map((f) => (
+                  <li key={f}>{f}</li>
+                ))}
+              </ul>
+              <TierCta tier={t} />
+            </li>
+          ))}
+        </ul>
+        <details className="mt-6 surface surface-panel rounded-2xl">
+          <summary className="cursor-pointer font-semibold text-slate-100">
+            What {HMS_CLOUD_NAME} adds to the open-source engine
+          </summary>
+          <div className="overflow-x-auto mt-3" tabIndex={0} role="region" aria-label="Open source and Cloud, scrollable">
+            <table className="w-full min-w-[520px] text-sm text-left text-slate-300">
+              <thead>
                 <tr>
-                  <th scope="col" className="p-4 font-semibold">Feature</th>
-                  <th scope="col" className="p-4 font-semibold">Open source</th>
-                  <th scope="col" className="p-4 font-semibold">Cloud (planned)</th>
+                  <th scope="col" className="p-2">Feature</th>
+                  <th scope="col" className="p-2">Open source</th>
+                  <th scope="col" className="p-2">Cloud (in development)</th>
                 </tr>
               </thead>
-              <tbody className="text-slate-300">
+              <tbody>
                 {HMS_OSS_VS_CLOUD.map((r) => (
                   <tr key={r.feature} className="border-t border-white/10 align-top">
-                    <th scope="row" className="p-4 font-medium text-slate-100">
-                      {r.feature}
-                    </th>
-                    <td className="p-4">{r.oss}</td>
-                    <td className="p-4">{r.cloud}</td>
+                    <th scope="row" className="p-2 font-medium text-slate-100">{r.feature}</th>
+                    <td className="p-2">{r.oss}</td>
+                    <td className="p-2">{r.cloud}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-300 mt-4 text-center">
-            {HMS_LICENSE_NOTE}
-          </p>
-        </div>
-      </section>
+        </details>
+        <p className="text-xs text-slate-300 mt-4 text-center">{HMS_LICENSE_NOTE}</p>
+      </Section>
 
-      {/* Pricing */}
-      <section
-        id="pricing"
-        className="relative section-x py-20 scroll-mt-24"
-        aria-labelledby="hms-pricing-heading"
-      >
-        <div className="max-w-6xl mx-auto">
-          <h2 id="hms-pricing-heading" className="section-heading text-center">
-            Plans
+      <Section id="faq" title="Questions">
+        <div className="grid gap-3 max-w-3xl mx-auto">
+          {HMS_FAQ.map((f) => (
+            <details key={f.q} className="surface surface-panel rounded-2xl">
+              <summary className="cursor-pointer font-semibold text-slate-100">{f.q}</summary>
+              <p className="mt-3 mb-0 text-slate-300 text-sm leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
+
+      {/* Provenance platform */}
+      <section className="relative section-x py-10 border-y border-white/5 bg-white/[0.01]" aria-labelledby="platform-heading">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 id="platform-heading" className="card-heading">
+            Part of the <ExternalLink href={HMS_COMPANY_URL}>WritersLogic</ExternalLink> provenance platform
           </h2>
-          <p className="text-slate-300 text-center max-w-2xl mx-auto mb-10">
-            Community is free and available now. Paid plans are in development;
-            prices are published at launch.
-          </p>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 list-none p-0 m-0">
-            {HMS_TIERS.map((t) => (
-              <li
-                key={t.plan}
-                className={`surface surface-panel rounded-2xl flex flex-col ${t.plan === "community" ? "border-teal-400/40" : ""}`}
-              >
-                <h3 className="card-heading mb-1">{t.name}</h3>
-                <p className="text-xs text-teal-300 font-mono mb-3">{t.status}</p>
-                <p className="text-2xl font-semibold text-slate-100 mb-2">
-                  {t.price}
-                </p>
-                <p className="text-slate-300 text-sm leading-relaxed mb-4">
-                  {t.summary}
-                </p>
-                <ul className="text-slate-300 text-sm leading-relaxed list-disc pl-5 mb-6 flex-grow">
-                  {t.features.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <TierCta tier={t} />
+          <p className="text-slate-300 text-sm leading-relaxed mb-4">{HMS_PLATFORM.intro}</p>
+          <ul className="flex flex-wrap justify-center gap-x-8 gap-y-2 list-none p-0 m-0 text-sm text-slate-300">
+            {HMS_PLATFORM.links.map((l) => (
+              <li key={l.name}>
+                {l.href ? (
+                  <ExternalLink href={l.href} className="font-semibold text-slate-100">{l.name}</ExternalLink>
+                ) : (
+                  <span className="font-semibold text-slate-100">{l.name}</span>
+                )}
+                : {l.detail}
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section
-        id="faq"
-        className="relative section-x py-16 border-t border-white/5 scroll-mt-24"
-        aria-labelledby="hms-faq-heading"
-      >
-        <div className="max-w-3xl mx-auto">
-          <h2 id="hms-faq-heading" className="section-heading text-center">
-            Questions
-          </h2>
-          <div className="grid gap-3 mt-8">
-            {HMS_FAQ.map((f) => (
-              <details key={f.q} className="surface surface-panel rounded-2xl">
-                <summary className="cursor-pointer font-semibold text-slate-100">
-                  {f.q}
-                </summary>
-                <p className="mt-3 mb-0 text-slate-300 text-sm leading-relaxed">
-                  {f.a}
-                </p>
-              </details>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Links */}
-      <section className="relative section-x pb-20" aria-label="Project links">
+      <section className="relative section-x py-12" aria-label="Project links">
         <div className="max-w-3xl mx-auto text-center">
           <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-slate-300 list-none p-0 mb-6">
             <li><ExternalLink href={HMS_LINKS.github}>GitHub</ExternalLink></li>
@@ -626,9 +628,7 @@ export function ProductPage() {
             <li><ExternalLink href={HMS_LINKS.pypiSdk}>PyPI (holographic-sdk)</ExternalLink></li>
             <li><ExternalLink href={HMS_LINKS.server}>Server docs</ExternalLink></li>
           </ul>
-          <p className="text-xs text-slate-300 m-0">
-            {HMS_FULL_NAME} is made by WritersLogic, Inc.
-          </p>
+          <p className="text-xs text-slate-300 m-0">{HMS_FULL_NAME} is made by WritersLogic, Inc.</p>
         </div>
       </section>
     </main>

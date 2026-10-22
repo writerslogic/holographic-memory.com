@@ -1,0 +1,36 @@
+name: Deploy
+
+# Manual until go-live: run with branch "preview" for a preview deploy, or "main"
+# for production once the custom domain is attached. Needs the CLOUDFLARE_API_TOKEN
+# and CLOUDFLARE_ACCOUNT_ID repository secrets.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Cloudflare Pages branch (preview or main)
+        required: true
+        default: preview
+        type: choice
+        options: [preview, main]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3.15.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=holographic-memory --branch=${{ inputs.branch }}
