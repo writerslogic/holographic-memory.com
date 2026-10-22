@@ -150,7 +150,7 @@ export const HMS_LICENSE_NOTE =
 // log, and team key management, audit and SSO, run on Cloudflare.
 
 export const HMS_LOCAL_FIRST_NOTE =
-  "Your memory and the engine stay on your machine in every plan. Cloud never runs queries or holds plaintext: it syncs and backs up end-to-end encrypted data that only your devices can open, and verifies signed provenance.";
+  "Your memory stays on your machines. Cloud keeps your machines in step: encrypted sync across your laptops, desktops and team, a backup you can restore anywhere, and independent verification of the provenance and deletion records your stores sign. We never hold your keys, never see your documents and never run your searches.";
 
 export interface HmsCompareRow {
   feature: string;
@@ -163,8 +163,9 @@ export const HMS_OSS_VS_CLOUD: HmsCompareRow[] = [
   { feature: "Where plaintext lives", oss: "Only on your devices", cloud: "Only on your devices; the server stores ciphertext" },
   { feature: "Encryption at rest and signed provenance", oss: "Included (opt-in features)", cloud: "Included" },
   { feature: "End-to-end encrypted sync and backup across devices", oss: "Not included", cloud: "Included" },
-  { feature: "Provenance and deletion-certificate verification, transparency log", oss: "Verify locally", cloud: "Hosted verification and public log" },
-  { feature: "Team keys, audit export, SSO", oss: "Not included", cloud: "Team and Enterprise" },
+  { feature: "Tamper-evident, hash-chained change history", oss: "Local journal", cloud: "Checked on every device" },
+  { feature: "Provenance and deletion-record verification, transparency log", oss: "Verify locally", cloud: "Hosted verification, your own append-only log, offline-verifiable receipts" },
+  { feature: "Scoped API keys, signed audit export, SSO (OIDC)", oss: "Not included", cloud: "Audit export in Cloud; all three in Team and Enterprise" },
   { feature: "Support", oss: "GitHub issues and discussions", cloud: "Email, shared channel or named contact by tier" },
 ];
 
@@ -205,12 +206,13 @@ export const HMS_TIERS: HmsTier[] = [
     name: "Cloud",
     price: "Usage-based",
     status: "In development",
-    summary: "Sync, backup and verification for the memory you keep locally.",
+    summary: "Sync, backup and verification for the memory you keep locally. Pay for encrypted storage, sync operations and verifications, each with a free monthly allowance.",
     features: [
-      "End-to-end encrypted sync across your devices",
-      "Encrypted backup; the server holds ciphertext only",
-      "Provenance and deletion-certificate verification",
-      "Business-hours email support",
+      "End-to-end encrypted sync (AES-256-GCM, keys only on your devices); concurrent edits converge and conflicts are reported",
+      "Encrypted backup of each store's full history; restore any device with your sync key",
+      "Tamper-evident history: reordered, altered or spliced changes are detected on your device",
+      "Provenance and deletion-record verification with receipts you can check offline",
+      "Signed audit export; business-hours email support",
     ],
     checkout: true,
   },
@@ -219,12 +221,12 @@ export const HMS_TIERS: HmsTier[] = [
     name: "Team",
     price: "Monthly plan",
     status: "In development",
-    summary: "Encrypted sync and verification shared across a team.",
+    summary: "Encrypted sync and verification shared across a team, with usage included each month.",
     features: [
-      "Everything in Cloud, with included usage",
-      "Team key management and audit export",
-      "SSO and a shared support channel",
-      "Uptime commitment",
+      "Everything in Cloud, with included monthly usage and a larger storage quota",
+      "Scoped API keys with rotation and instant revocation",
+      "SSO through your identity provider (OIDC) and a signed, exportable audit log",
+      "Shared support channel and uptime commitment",
     ],
     checkout: true,
   },
@@ -235,6 +237,7 @@ export const HMS_TIERS: HmsTier[] = [
     status: "Talk to us",
     summary: "Your keys, your infrastructure, compliance reporting.",
     features: [
+      "Annual agreement with custom quotas",
       "Bring your own key (KMS / HSM)",
       "Transparency log and verification you can run yourself",
       "Compliance reports and audit retention",
@@ -281,7 +284,7 @@ export const HMS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "What does the Cloud do if the engine runs locally?",
-    a: `${HMS_CLOUD_NAME} is sync, backup and verification, not a hosted engine. Your devices encrypt before anything leaves them, so the server stores ciphertext only; it also verifies provenance and deletion certificates against a transparency log and manages team keys, audit and SSO. It is in development: join the waitlist and we will write when the beta opens. Pricing is published at launch.`,
+    a: `${HMS_CLOUD_NAME} is sync, backup and verification, not a hosted engine. Your documents, embeddings, memory index, queries and sync key never leave your devices. Every change is sealed on your device before upload, so the service holds only sealed bytes and the metadata needed to order them (change counts, sizes, times, device and key identifiers) plus your account and billing details. For verification it keeps hashes, the signer's public identity and the claim time, never the statement's contents. It is in development: join the waitlist and we will write when the beta opens. Prices are published at launch.`,
   },
 ];
 
