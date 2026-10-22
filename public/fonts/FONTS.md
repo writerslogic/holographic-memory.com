@@ -74,3 +74,7 @@ there is no second range to gate, so it would only add requests.
 Its [OFL license](./OFL-DMSans.txt) is included. The PDF generator subsets this
 static TTF; the web WOFF2 variable font cannot be subset reliably by pdf-lib.
 This file is fetched only by the submission endpoint and is not a new page font.
+
+## Latin subset for holographic-memory.com
+
+`source-serif-4-variable.woff2`, `WritersLogic-Display.woff2` and `dm-sans-variable.woff2` are re-subset with pyftsubset to Basic Latin, Latin-1 and the punctuation and symbols the page uses (layout features and name tables kept). Source Serif 4 is additionally pinned at opsz 18 (the wght axis is kept); this site uses it only for body copy. 382 KB of fonts per cold load became about 176 KB.

@@ -10,12 +10,19 @@ const { render, head } = await import(
 );
 
 const html = readFileSync(indexPath, "utf8");
-if (!html.includes("<!--app-->") || !html.includes("<!--head-->")) {
-  throw new Error("dist/index.html is missing the <!--app--> or <!--head--> marker");
+if (!html.includes('<div id="root"><!--app--></div>') || !html.includes("<!--head-->")) {
+  throw new Error("dist/index.html is missing the root <!--app--> or <!--head--> marker");
 }
 const app = render();
 if (app.length < 2000) throw new Error(`server render is suspiciously small (${app.length} bytes)`);
-writeFileSync(indexPath, html.replace("<!--head-->", head()).replace("<!--app-->", app));
+// email_off keeps Cloudflare's email obfuscation from injecting its blocking
+// decode script; the only address on the page is a public mailto link.
+writeFileSync(
+  indexPath,
+  html
+    .replace("<!--head-->", head())
+    .replace('<div id="root"><!--app--></div>', `<!--email_off--><div id="root">${app}</div><!--/email_off-->`),
+);
 rmSync(`${root}dist-ssr`, { recursive: true, force: true });
 
 // One canonical URL; lastmod is the build date, as on writerslogic.com.
