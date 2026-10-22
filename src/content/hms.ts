@@ -29,9 +29,9 @@ export const HMS_HERO_LINE_SHORT = "Runs inside your app, on your machine. No se
 export const HMS_REPO = "https://github.com/writerslogic/holographic-memory";
 export const HMS_LINKS = {
   github: HMS_REPO,
-  docs: "https://writerslogic.github.io/holographic-memory/",
+  docs: "https://docs.holographic-memory.com/",
   quickstart:
-    "https://writerslogic.github.io/holographic-memory/latest/quickstart/",
+    "https://docs.holographic-memory.com/latest/quickstart/",
   benchmarks: `${HMS_REPO}/tree/main/benchmarks/results`,
   crates: "https://crates.io/crates/holographic-memory",
   docsRs: "https://docs.rs/holographic-memory",
