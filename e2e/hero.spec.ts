@@ -84,12 +84,15 @@ test("select-all leaves UI chrome out and keeps content selectable", async ({ pa
 test("hero mark is decorative and static under reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const mark = page.locator("svg.hero-mark");
+  const mark = page.locator("picture.hero-mark");
   await expect(mark).toHaveAttribute("aria-hidden", "true");
   expect(await mark.evaluate((el) => getComputedStyle(el).pointerEvents)).toBe("none");
-  expect(
-    await page.locator(".hero-mark__spin").evaluate((el) => getComputedStyle(el).animationName),
-  ).toBe("none");
+  const image = mark.locator("img");
+  await expect(image).toBeVisible();
+  expect(await image.evaluate((el: HTMLImageElement) => el.currentSrc)).toContain(
+    "/images/crystal-halo/crystal-detailed-static.svg",
+  );
+  expect(await image.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
 });
 
 test("hydrates the prerendered page without console errors", async ({ page }) => {

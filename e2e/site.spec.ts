@@ -68,6 +68,7 @@ test("light theme passes axe and persists", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  expect(await page.locator("#explore-heading").evaluate((el) => getComputedStyle(el).color)).toBe("rgb(12, 18, 25)");
   await page.evaluate(() => document.querySelectorAll("details").forEach((d) => (d.open = true)));
   const { violations } = await new AxeBuilder({ page }).analyze();
   expect(violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
@@ -97,4 +98,25 @@ test("page nav stays visible while scrolling", async ({ page }) => {
   await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight / 2, behavior: "instant" }));
   const box = await page.getByRole("navigation", { name: "On this page" }).boundingBox();
   expect(box?.y).toBe(0);
+});
+
+test("search walkthrough switches the source passage and comparison", async ({ page }) => {
+  await page.goto("/");
+  const result = page.locator(".search-example__result");
+  await expect(result).toContainText("Article 10");
+  await page.getByLabel("Choose a quickstart query").selectOption({ label: "nobody may be tortured" });
+  await expect(result).toContainText("Article 5");
+  await expect(result).toContainText("No one shall be subjected to torture");
+  await expect(result).toContainText("udhr-20");
+  await expect(result).not.toContainText("Article 10");
+  await expect(page.locator(".search-example__note")).toContainText("not a live engine");
+});
+
+test("quickstart exposes MCP and Node setup with keyboard navigation", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("tab", { name: "MCP", exact: true }).click();
+  await expect(page.getByRole("tabpanel")).toContainText("--features mcp,security");
+  await page.keyboard.press("End");
+  await expect(page.getByRole("tab", { name: "Node.js" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel")).toContainText("npm ci --omit=optional");
 });

@@ -82,7 +82,7 @@
 @utility section-heading {
   font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
   font-weight: 700;
-  color: white;
+  color: var(--color-text-primary);
   margin-bottom: 1rem;
 }
 
@@ -376,7 +376,7 @@
 @utility section-heading-center {
   font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
   font-weight: 700;
-  color: white;
+  color: var(--color-text-primary);
   margin-bottom: 1rem;
   text-align: center;
 }
@@ -1030,12 +1030,7 @@ main.relative::before {
   color: var(--color-chart-1); opacity: 0.13;
 }
 :root[data-theme="light"] .hero-mark { opacity: 0.1; }
-.hero-mark__spin {
-  transform-box: view-box; transform-origin: 256px 291px;
-  animation: hero-mark-turn 4.5s cubic-bezier(0.45, 0, 0.2, 1) 0.3s 1 both;
-}
-@keyframes hero-mark-turn { from { rotate: 0deg; } to { rotate: 360deg; } }
-@media (prefers-reduced-motion: reduce) { .hero-mark__spin { animation: none; } }
+.hero-mark img { display: block; width: 100%; height: auto; }
 @media (max-width: 639px) {
   .hero-mark { top: 0; right: -40%; width: 26rem; translate: 0 -20%; opacity: 0.09; }
 }
@@ -1141,3 +1136,30 @@ button, summary, [role="tab"], .btn-primary, .btn-ghost, .skip-link,
 .matrix__cell { font-size: 1.125rem; color: var(--color-text-secondary); }
 .matrix__cell--yes { color: var(--color-positive-text); }
 .matrix__cell--partial { color: var(--color-text-primary); }
+
+.start-card { display: flex; flex-direction: column; gap: 0.75rem; text-decoration: none; transition: border-color 150ms ease, translate 150ms ease; }
+.start-card p { margin: 0; color: var(--color-text-secondary); font-size: 0.875rem; line-height: 1.7; flex: 1; }
+.start-card span { color: var(--color-text-primary); font-size: 0.8125rem; font-weight: 600; }
+.start-card:hover { border-color: var(--color-chart-1); translate: 0 -3px; }
+.start-card:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.search-example { display: grid; grid-template-columns: 1fr 1.2fr; border: 1px solid var(--color-border-subtle); border-radius: 1rem; overflow: hidden; background: var(--color-bg-inset); }
+.search-example__query, .search-example__result { padding: clamp(1.25rem, 3vw, 2rem); min-width: 0; }
+.search-example__result { border-left: 1px solid var(--color-border-subtle); }
+.search-example__eyebrow { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-secondary); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 1.5rem; }
+.search-example label { display: block; font-weight: 600; margin-bottom: 0.75rem; }
+.search-example select { width: 100%; min-width: 0; padding: 0.75rem; background: var(--color-bg-inset); color: var(--color-text-primary); border: 1px solid var(--color-border-subtle); border-radius: 0.5rem; font: inherit; }
+.search-example select:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.search-example__query > p:not(.search-example__eyebrow) { font-size: 0.875rem; line-height: 1.7; color: var(--color-text-secondary); margin-top: 1.25rem; }
+.search-example a { color: var(--color-text-primary); text-decoration: underline; text-underline-offset: 3px; font-size: 0.875rem; }
+.search-example h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.75rem; font-size: 1.25rem; margin: 0 0 1rem; }
+.search-example h3 code { font-size: 0.75rem; color: var(--color-text-secondary); }
+.search-example blockquote { margin: 0; border-left: 2px solid var(--color-chart-1); padding-left: 1rem; font-size: 1rem; line-height: 1.75; }
+.search-example dl { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.5rem 0 0; font-size: 0.75rem; }
+.search-example dt { color: var(--color-text-secondary); }
+.search-example dd { margin: 0.3rem 0 0; font-family: var(--font-mono); }
+.search-example__note { grid-column: 1 / -1; padding: 1rem 2rem; margin: 0; border-top: 1px solid var(--color-border-subtle); font-size: 0.75rem; color: var(--color-text-secondary); }
+@media (max-width: 639px) {
+  .search-example { grid-template-columns: 1fr; }
+  .search-example__result { border-left: 0; border-top: 1px solid var(--color-border-subtle); }
+}
+@media (prefers-reduced-motion: reduce) { .start-card:hover { translate: none; } }

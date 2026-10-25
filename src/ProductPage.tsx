@@ -1,3 +1,4 @@
+import { SearchExample } from "./components/SearchExample";
 import { HmsMarkBackdrop } from "./components/HmsMark";
 import { InstallCommands } from "./components/InstallCommands";
 import { BenchChart } from "./components/BenchChart";
@@ -70,7 +71,9 @@ const INSTALL = [
   { lang: "Python", cmd: "pip install holographic-sdk" },
 ];
 
-const PY_SHELL = `# hms-server stores vectors you supply; the SDK is its HTTP client
+const PY_SHELL = `git clone https://github.com/writerslogic/holographic-memory
+cd holographic-memory
+# hms-server stores vectors you supply; the SDK is its HTTP client
 cargo build --release --features server --bin hms-server
 HMS_API_KEY=change-me target/release/hms-server --input-dim 384 &
 pip install holographic-sdk`;
@@ -183,6 +186,7 @@ function TierCta({ tier }: { tier: HmsTier }) {
 }
 
 const NAV = [
+  { href: "#explore", label: "Explore" },
   { href: "#benchmarks", label: "Benchmarks" },
   { href: "#how", label: "How it works" },
   { href: "#use-cases", label: "Use cases" },
@@ -323,6 +327,27 @@ export function ProductPage() {
         </div>
       </section>
 
+      <Section id="explore" title="From a question to its source" intro="Explore a real quickstart result, then run the same example on your machine.">
+        <SearchExample />
+      </Section>
+
+      <Section id="start" title="Choose your way in" alt intro="One engine, different ways to connect. Pick the setup that matches your application.">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[
+            { title: "Editors & agents", body: "Persistent memory through MCP. Start a local process or connect to a shared server.", href: "integrations/editors/", link: "Connect your editor" },
+            { title: "Rust", body: "Embed search directly in your process. Own the store and enable encryption when you need it.", href: "quickstart/", link: "Run the Rust example" },
+            { title: "Python", body: "Use holographic-sdk to call your hms-server. Supply vectors from the model you choose.", href: "get-started/choose/", link: "Choose the right package" },
+            { title: "Node.js", body: "Build the native module from source and call the Rust engine from JavaScript or TypeScript.", href: "get-started/install/", link: "Build the Node module" },
+          ].map((path) => (
+            <a key={path.title} href={`https://docs.holographic-memory.com/dev/${path.href}`} className="start-card surface surface-panel rounded-2xl">
+              <h3 className="card-heading">{path.title}</h3>
+              <p>{path.body}</p>
+              <span>{path.link} →</span>
+            </a>
+          ))}
+        </div>
+      </Section>
+
       <Section
         id="benchmarks"
         title="Benchmarks"
@@ -458,7 +483,7 @@ export function ProductPage() {
         intro={
           <>
             Store a document and find it again. The{" "}
-            <ExternalLink href={HMS_LINKS.quickstart}>five-minute quickstart</ExternalLink> adds
+            <ExternalLink href={HMS_LINKS.quickstart}>complete quickstart</ExternalLink> adds
             encryption and filters.
           </>
         }
@@ -492,6 +517,33 @@ export function ProductPage() {
                   </div>
                 ),
               },
+              {
+                id: "mcp",
+                label: "MCP",
+                panel: (
+                  <div className="grid gap-4">
+                    <p className="text-slate-300 text-sm leading-relaxed m-0">Build the local MCP server, then configure your editor to launch the absolute path to the binary. The editor owns the stdio process.</p>
+                    <CodeBlock label="shell: build MCP" code={`git clone https://github.com/writerslogic/holographic-memory
+cd holographic-memory
+cargo build --release --features mcp,security --bin hms-mcp`} />
+                    <ExternalLink href="https://docs.holographic-memory.com/dev/integrations/editors/">Editor configuration and shared HTTP setup</ExternalLink>
+                  </div>
+                ),
+              },
+              {
+                id: "node",
+                label: "Node.js",
+                panel: (
+                  <div className="grid gap-4">
+                    <p className="text-slate-300 text-sm leading-relaxed m-0">Build with Rust and Node 24 or newer, then run the complete ingest-and-search example.</p>
+                    <CodeBlock label="shell: Node quickstart" code={`git clone https://github.com/writerslogic/holographic-memory
+cd holographic-memory
+npm ci --omit=optional
+npm run build
+node examples/quickstart/node/quickstart.mjs`} />
+                  </div>
+                ),
+              },
             ]}
           />
           <p className="text-slate-300 text-sm leading-relaxed mt-6 mb-0">
@@ -499,6 +551,7 @@ export function ProductPage() {
             Go, Java and .NET: the C ABI bindings in{" "}
             <ExternalLink href={`${HMS_LINKS.github}/tree/main/bindings`}>bindings/</ExternalLink>.
           </p>
+          <p className="text-slate-300 text-sm mt-4"><ExternalLink href="https://docs.holographic-memory.com/dev/get-started/troubleshooting/">Troubleshoot imports, authentication, dimensions and locked stores</ExternalLink>.</p>
         </div>
       </Section>
 

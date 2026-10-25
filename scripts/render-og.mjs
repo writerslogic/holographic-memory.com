@@ -35,6 +35,15 @@ const browser = await puppeteer.launch({ executablePath: chrome, headless: true 
 try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.protocol === "file:" && url.pathname.startsWith("/images/")) {
+      request.continue({ url: pathToFileURL(resolve("public", `.${url.pathname}`)).href });
+    } else {
+      request.continue();
+    }
+  });
   await page.goto(pathToFileURL(resolve(source)).href, { waitUntil: "load" });
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: resolve(output), type: "png" });

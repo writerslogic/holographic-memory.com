@@ -63,7 +63,7 @@ export const HMS_LIMITS = [
   "The older sparse vector path (memorize_vector) is experimental and far behind HNSW libraries: on glove-100, Apple M4: recall@10 0.252 at 33.7 QPS against hnswlib 0.831 at 3,368 QPS (public_glove-100-angular.json). Use the vertex graph index for vector search.",
   "Hypervector sketches and term counts are not encryption; anyone holding a plaintext store can test candidate text against it. Use the encrypted store for confidentiality.",
   "Deleted bytes can survive in places no file API reaches: SSD wear levelling, snapshots, backups and swap. Pair purge with encryption or full-disk encryption.",
-  "No MCP server ships yet, the npm package is deprecated (build the Node module from source) and Python is an HTTP client, not in-process search.",
+  "The MCP server builds from source with the mcp feature. Build the Node module from source while the npm package is deprecated. The Python SDK is an HTTP client for hms-server, not in-process document search.",
 ] as const;
 
 // ── How alternatives document the same properties ──────────────────────────
@@ -283,7 +283,7 @@ export const HMS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Which languages can I use?",
-    a: "Rust natively; Node.js bindings built from source; a Python HTTP client (holographic-sdk) for hms-server; and a C ABI with Go, Java and .NET bindings.",
+    a: "Rust natively; MCP for editors and agents; Node.js bindings built from source; a Python HTTP client (holographic-sdk) for hms-server; and a C ABI with Go, Java and .NET bindings.",
   },
   {
     q: "What does the Cloud do if the engine runs locally?",
