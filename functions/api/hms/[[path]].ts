@@ -3,7 +3,7 @@
 // to it and names this site's origin so Checkout returns here. Preview deployments
 // (*.pages.dev) use the Stripe test-mode twin; everything else uses the live Worker.
 
-const LIVE = "https://writerslogic.com/api/hms";
+const LIVE = "https://writerslogic.com/api/warm";
 const TEST = "https://hms-billing-test.writerslogic.com/api/hms-staging";
 const ROUTES = new Set(["GET /checkout", "GET /welcome", "GET /portal", "POST /portal"]);
 

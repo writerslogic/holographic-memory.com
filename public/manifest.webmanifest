@@ -1,7 +1,7 @@
 {
   "name": "WritersLogic Holographic Memory",
   "short_name": "HMS",
-  "description": "Local, encrypted, provenance-aware memory for AI agents.",
+  "description": "Hybrid search, graph indexing, and vector-symbolic memory.",
   "id": "/",
   "start_url": "/",
   "scope": "/",

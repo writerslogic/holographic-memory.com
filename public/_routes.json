@@ -1,5 +1,1 @@
-{
-  "version": 1,
-  "include": ["/*"],
-  "exclude": ["/assets/*", "/fonts/*", "/images/*", "/*.png", "/*.svg", "/*.ico", "/*.webmanifest", "/*.txt", "/*.xml", "/theme-init.js"]
-}
+{"version":1,"include":["/*"],"exclude":[]}

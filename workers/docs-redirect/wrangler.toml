@@ -1,0 +1,7 @@
+name = "warm-docs-redirect"
+main = "index.js"
+compatibility_date = "2026-10-30"
+workers_dev = false
+[[routes]]
+pattern = "docs.holographic-memory.com"
+custom_domain = true

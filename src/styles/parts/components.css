@@ -1005,7 +1005,12 @@ main.relative::before {
 .hero__proof { position: relative; width: 100%; padding-top: clamp(1rem, 3svh, 2rem); }
 .hero__title {
   font-size: clamp(1.75rem, min(1rem + 3.2vw, 0.75rem + 5.2svh), 3.25rem);
-  line-height: 1.12; margin: 0 0 clamp(0.75rem, 2.2svh, 1.25rem);
+  line-height: 1.12; margin: 0 0 clamp(0.35rem, 1svh, 0.6rem);
+}
+.hero__technical-line {
+  font-size: clamp(1rem, 0.9rem + 0.55vw, 1.3rem);
+  line-height: 1.35; font-weight: 600;
+  margin: 0 auto clamp(0.7rem, 2svh, 1.1rem);
 }
 .hero__line {
   font-size: clamp(1rem, 0.94rem + 0.3vw, 1.125rem); line-height: 1.6;

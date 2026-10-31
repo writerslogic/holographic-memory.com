@@ -3,12 +3,13 @@
 // Plain data (no import.meta.env, no React) so the page, the server render and the
 // tests can all import it. Every factual claim carries the committed source in
 // github.com/writerslogic/holographic-memory (main) that backs it; a claim without a
-// committed source is worded as "in progress". writerslogic.com keeps a shorter copy
-// of the shared claims in src/content/hms.ts; keep the two in step.
+// committed source is worded as "in progress". Keep the shorter product copy on
+// writerslogic.com in step with this file.
 
 import { SIFT_QPS_FACTOR_095 } from "./benchmarks";
 
 export const HMS_NAME = "Holographic Memory";
+export const HMS_TECHNICAL_LINE = "Hybrid search, graph indexing, and vector-symbolic memory.";
 export const HMS_FULL_NAME = "WritersLogic Holographic Memory";
 export const HMS_CLOUD_NAME = "WritersLogic Holographic Memory Cloud";
 export const HMS_SHORT = "HMS";
@@ -18,7 +19,7 @@ export const HMS_CANONICAL = `${HMS_PRODUCT_ORIGIN}/`;
 export const HMS_COMPANY_URL = "https://writerslogic.com";
 export const HMS_OG_IMAGE = `${HMS_PRODUCT_ORIGIN}/og-image.png`;
 export const HMS_OG_IMAGE_ALT =
-  "WritersLogic Holographic Memory: local, encrypted, provenance-aware memory for AI agents";
+  `WritersLogic Holographic Memory: ${HMS_TECHNICAL_LINE}`;
 
 export const HMS_TAGLINE =
   "Local, encrypted, provenance-aware memory for AI agents.";
@@ -294,12 +295,12 @@ export const HMS_FAQ: { q: string; a: string }[] = [
 // ── Static-shell metadata (written into dist/index.html by scripts/prerender.mjs)
 
 export const HMS_META = {
-  title: `${HMS_FULL_NAME}: Local, Encrypted Memory for AI Agents`,
+  title: `${HMS_FULL_NAME} | Hybrid Search, Graph Indexing, Vector-Symbolic Memory`,
   description:
-    "Embeddable memory for AI agents that runs on your machine. Hybrid search, vector-symbolic fact memory, optional encryption at rest and signed provenance in one open-source Rust engine. No service calls.",
+    `${HMS_TECHNICAL_LINE} Embeddable memory for AI agents that runs on your machine, with optional encryption at rest and signed provenance.`,
   ogTitle: `${HMS_FULL_NAME}`,
   ogDescription:
-    "Local, encrypted, provenance-aware memory for AI agents. Open-source Rust engine that stays on your machine; encrypted sync, backup and verification Cloud in development.",
+    `${HMS_TECHNICAL_LINE} An open-source Rust engine that stays on your machine.`,
 } as const;
 
 export const HMS_JSON_LD = {

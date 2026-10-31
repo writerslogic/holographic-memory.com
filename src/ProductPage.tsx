@@ -20,6 +20,7 @@ import {
   HMS_LINKS,
   HMS_LOCAL_FIRST_NOTE,
   HMS_NAME,
+  HMS_TECHNICAL_LINE,
   HMS_HERO_LINE,
   HMS_HERO_LINE_SHORT,
   HMS_OSS_VS_CLOUD,
@@ -262,10 +263,13 @@ export function ProductPage() {
             id="hms-heading"
             className="hero__title font-serif font-semibold tracking-tight text-balance text-slate-100"
           >
-            {HMS_TAGLINE}
+            {HMS_NAME}
           </h1>
+          <p className="hero__technical-line text-slate-100 max-w-2xl mx-auto">
+            {HMS_TECHNICAL_LINE}
+          </p>
           <p className="hero__line text-slate-300 max-w-2xl mx-auto">
-            <span className="hero__long">{HMS_HERO_LINE}</span>
+            <span className="hero__long">{HMS_TAGLINE} {HMS_HERO_LINE}</span>
             <span className="hero__short">{HMS_HERO_LINE_SHORT}</span>
           </p>
           <InstallCommands lines={INSTALL} />

@@ -1,4 +1,6 @@
-# holographic-memory.com
+# Holographic Memory
+
+**Hybrid search, graph indexing, and vector-symbolic memory.**
 
 Product site for WritersLogic Holographic Memory, served by Cloudflare Pages.
 
@@ -16,3 +18,7 @@ npm run deploy:preview  # Cloudflare Pages project `holographic-memory`, branch 
 - Content and claims: `src/content/hms.ts`. Every benchmark cites a file committed on `main` of github.com/writerslogic/holographic-memory; anything without one is listed as in progress.
 - Checkout buttons: build with `VITE_HMS_CHECKOUT_ENABLED=true` to point the Cloud, Team and Enterprise tiers at `/api/hms/checkout?plan=<cloud|team|enterprise>`. When the flag is off (the default) they open a waitlist email, and the checkout links are not in the bundle.
 - Social card: `public/og-image.png`, generated from `scripts/assets/og-image.html` with `npm run og`.
+
+## WARM migration
+
+The full product site now lives in `warm-site/` in the writerslogic.com repository and builds to `/warm`. This repository retains the legacy hostname's Pages deployment and API proxy. Its middleware redirects only GET/HEAD page requests, preserving documentation paths and queries. API paths and writes continue to their existing handlers. `workers/docs-redirect` redirects the old GitHub Pages documentation hostname while serving the exact immutable `/ns/hms/v1.jsonld` context bytes at their original URI.

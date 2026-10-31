@@ -1,32 +1,18 @@
-// The apex is canonical: requests for www.holographic-memory.com get a permanent redirect
-// to the same path and query on holographic-memory.com. /docs and everything under it moves
-// to the docs subdomain, as writerslogic.com/docs does. Every other request passes through.
+const LEGACY_HOSTS = new Set(["holographic-memory.com", "www.holographic-memory.com", "docs.holographic-memory.com"]);
+const DESTINATION = "https://writerslogic.com/warm";
 
-const APEX = "holographic-memory.com";
-const DOCS = `https://docs.${APEX}`;
-
-export function docsRedirect(url: URL): string | null {
-  if (url.pathname !== "/docs" && !url.pathname.startsWith("/docs/")) return null;
-  return DOCS + (url.pathname.slice("/docs".length) || "/") + url.search;
+export function migrationRedirect(url: URL, method: string): string | null {
+  if (!LEGACY_HOSTS.has(url.hostname) || !["GET", "HEAD"].includes(method)) return null;
+  if (url.pathname === "/api" || url.pathname.startsWith("/api/")) return null;
+  const docsHost = url.hostname === "docs.holographic-memory.com";
+  const path = url.pathname === "/" ? "" : url.pathname;
+  return `${DESTINATION}${docsHost ? "/docs" : ""}${path}${url.search}${url.hash}`;
 }
 
-export function apexRedirect(url: URL): string | null {
-  if (url.hostname !== `www.${APEX}`) return null;
-  const to = new URL(url.toString());
-  to.hostname = APEX;
-  to.protocol = "https:";
-  to.port = "";
-  return to.toString();
-}
-
-export const onRequest = async ({
-  request,
-  next,
-}: {
+export const onRequest = async ({ request, next }: {
   request: Request;
   next: () => Promise<Response>;
 }): Promise<Response> => {
-  const url = new URL(request.url);
-  const to = docsRedirect(url) ?? apexRedirect(url);
-  return to ? Response.redirect(to, 301) : next();
+  const target = migrationRedirect(new URL(request.url), request.method);
+  return target ? Response.redirect(target, 301) : next();
 };

@@ -11,6 +11,14 @@ const SIZES = [
   [360, 640],
 ] as const;
 
+test("hero places the technical line under the product name", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#hms-heading")).toHaveText("Holographic Memory");
+  await expect(page.locator("#hms-heading + .hero__technical-line")).toHaveText(
+    "Hybrid search, graph indexing, and vector-symbolic memory.",
+  );
+});
+
 for (const [width, height] of SIZES) {
   test(`hero title through CTAs fit the first viewport at ${width}x${height}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height });

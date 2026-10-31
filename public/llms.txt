@@ -1,5 +1,7 @@
 # WritersLogic Holographic Memory (HMS)
 
+Hybrid search, graph indexing, and vector-symbolic memory.
+
 > Local, encrypted, provenance-aware memory for AI agents. HMS is an open-source Rust engine for search and memory that runs inside your app, on your machine. It makes no service calls and sends no telemetry.
 
 HMS is made by WritersLogic, Inc. (https://writerslogic.com).
